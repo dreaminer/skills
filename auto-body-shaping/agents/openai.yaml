@@ -1,0 +1,4 @@
+interface:
+  display_name: "Auto Body Shaping"
+  short_description: "Run body shaping with gated auto-approval"
+  default_prompt: "Use $auto-body-shaping to recover and confirm this project's domain body with automated consistency checks."

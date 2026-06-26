@@ -1,0 +1,32 @@
+{
+  "name": "dreaminer-skills",
+  "version": "0.1.0",
+  "description": "Installable agent skill collection.",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "codex",
+    "claude",
+    "domain-language",
+    "body-shaping"
+  ],
+  "files": [
+    ".claude-plugin",
+    "body-shaping",
+    "body-auto-shaping",
+    "auto-body-shaping",
+    "yolo-body-shaping",
+    "make-body",
+    "proposal-review",
+    "docs",
+    "scripts",
+    "README.md"
+  ],
+  "scripts": {
+    "validate": "node scripts/validate-plugin.mjs",
+    "pack:dry-run": "npm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

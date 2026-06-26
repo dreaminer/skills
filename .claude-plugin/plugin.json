@@ -1,0 +1,11 @@
+{
+  "name": "dreaminer-skills",
+  "skills": [
+    "./body-shaping",
+    "./body-auto-shaping",
+    "./auto-body-shaping",
+    "./yolo-body-shaping",
+    "./make-body",
+    "./proposal-review"
+  ]
+}

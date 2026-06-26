@@ -1,0 +1,4 @@
+interface:
+  display_name: "Body Auto Shaping"
+  short_description: "Run body-shaping with one sub-agent that auto-confirms Yes by default, escalating only on incoherence or a conflict"
+  default_prompt: "Use $body-auto-shaping to advance the next body-shaping candidate, auto-answering Yes by default and routing to me only when the source is incoherent or the evidence conflicts (within a doc, within the code, between doc and code, against canonical, or a naming clash)."

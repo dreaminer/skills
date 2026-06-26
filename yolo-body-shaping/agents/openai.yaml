@@ -1,0 +1,4 @@
+interface:
+  display_name: "Yolo Body Shaping"
+  short_description: "Run body shaping with code-only auto-decisions and inferred isolation"
+  default_prompt: "Use $yolo-body-shaping to recover and confirm this project's domain body. Auto-decide UNDECIDED candidates from code evidence and isolate inferred results into INFERRED_*.md."

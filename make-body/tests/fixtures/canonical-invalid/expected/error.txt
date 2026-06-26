@@ -1,0 +1,2 @@
+CANDIDATE {Order} leaked into canonical ESSENTIAL_DOMAIN
+DANGLING [Order Row] in ESSENTIAL_DOMAIN -- must resolve in ESSENTIAL_DOMAIN
