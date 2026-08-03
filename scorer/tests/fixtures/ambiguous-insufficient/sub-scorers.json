@@ -1,0 +1,45 @@
+[
+  {
+    "sub_scorer": "omission",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "회귀 검증 적합성",
+          "score": 85,
+          "deductions": [
+            {
+              "severity": "Major",
+              "penalty_points": 15,
+              "reason": "회귀 테스트 실행 결과가 누락됨",
+              "evidence": "A-001: \"regression_check: not_applicable\""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "distortion",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "회귀 검증 적합성",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "violation_excess",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "회귀 검증 적합성",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,59 @@
+[
+  {
+    "sub_scorer": "omission",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "사실 정확성",
+          "score": 85,
+          "deductions": [
+            {
+              "severity": "Major",
+              "penalty_points": 15,
+              "reason": "처리 건수에 대한 외부 출처 링크가 누락됨",
+              "evidence": "A-001: \"처리 항목은 4개다.\" 뒤에 출처 링크가 없음"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "distortion",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "사실 정확성",
+          "score": 85,
+          "deductions": [
+            {
+              "severity": "Major",
+              "penalty_points": 15,
+              "reason": "처리 건수에 대한 외부 출처 링크가 누락됨",
+              "evidence": "A-001: \"처리 항목은 4개다.\" 뒤에 출처 링크가 없음"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "violation_excess",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "사실 정확성",
+          "score": 85,
+          "deductions": [
+            {
+              "severity": "Major",
+              "penalty_points": 15,
+              "reason": "처리 건수에 대한 외부 출처 링크가 누락됨",
+              "evidence": "A-001: \"처리 항목은 4개다.\" 뒤에 출처 링크가 없음"
+            }
+          ]
+        }
+      ]
+    }
+  }
+]

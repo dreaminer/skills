@@ -1,0 +1,14 @@
+{
+  "case_id": "out-of-rubric",
+  "category": "false_positive_out_of_rubric",
+  "dimension": "사실 정확성",
+  "criteria": "최종 응답의 처리 건수가 원시 입력의 건수와 정확히 일치한다.",
+  "truth": "NO_DEFECT",
+  "score_expectation": {
+    "operator": "eq",
+    "value": 100
+  },
+  "expected_gate": "SUCCESS",
+  "required_evidence": [],
+  "rationale": "건수는 정확하며 Rubric은 출처 링크를 요구하지 않는다."
+}

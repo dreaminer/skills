@@ -1,0 +1,7 @@
+interface:
+  display_name: "Make Body"
+  short_description: "Recover Essential language from verified flow tests"
+  default_prompt: "Use $make-body to recover and human-ratify Essential Domain and UseCase language from a ready TEST_FLOWS_RESULT and its project tests."
+
+policy:
+  allow_implicit_invocation: false

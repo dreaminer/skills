@@ -1,0 +1,24 @@
+{
+  "case_id": "true-omission",
+  "category": "true_omission",
+  "dimension": "결과 완결성",
+  "criteria": "실행 결과에 검사 대상, 확인 내용, 최종 판정이 모두 명시되어 후속 단계가 추가 추론 없이 사용할 수 있다.",
+  "truth": "DEFECT",
+  "score_expectation": {
+    "operator": "lt",
+    "value": 90
+  },
+  "expected_gate": "CONTINUE_TO_STAGE_4",
+  "finding": {
+    "id": "missing-final-decision",
+    "definition": "요구된 최종 판정이 결과에서 누락되거나 미기록 상태다."
+  },
+  "required_evidence": [
+    {
+      "artifact_id": "A-001",
+      "locator": "final-response",
+      "quote": "최종 결과: 기록하지 않음"
+    }
+  ],
+  "rationale": "Rubric이 최종 판정을 명시적으로 요구하고 Runner가 그 위치에 미기록 상태를 남겼다."
+}

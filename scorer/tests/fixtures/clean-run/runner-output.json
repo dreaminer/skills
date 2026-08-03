@@ -1,0 +1,21 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "items": [
+      "alpha",
+      "beta",
+      "gamma"
+    ]
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "final_response",
+      "locator": "final-response",
+      "content": "최종 결과: 3건 처리"
+    }
+  ],
+  "exit_status": 0,
+  "errors": [],
+  "notes": []
+}

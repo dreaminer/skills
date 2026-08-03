@@ -1,0 +1,17 @@
+{
+  "name": "dreaminer-skills",
+  "skills": [
+    "./seed-body",
+    "./make-body",
+    "./seed-system",
+    "./blind-spot-pass",
+    "./test-flows",
+    "./explain-flows",
+    "./proposal-review",
+    "./skill-auditor",
+    "./criteria-opt",
+    "./rubricator",
+    "./scorer",
+    "./proposer"
+  ]
+}

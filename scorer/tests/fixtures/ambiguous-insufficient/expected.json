@@ -1,0 +1,14 @@
+{
+  "case_id": "ambiguous-insufficient",
+  "category": "false_positive_unmet_precondition",
+  "dimension": "회귀 검증 적합성",
+  "criteria": "소스 변경이 적용되면 회귀 검증 결과를 기록하고, 변경이 없으면 `not_applicable`로 명시한다.",
+  "truth": "NO_DEFECT",
+  "score_expectation": {
+    "operator": "eq",
+    "value": 100
+  },
+  "expected_gate": "SUCCESS",
+  "required_evidence": [],
+  "rationale": "소스 변경이 없으므로 Rubric이 허용한 not_applicable 상태다."
+}

@@ -1,0 +1,19 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "request": "변경 필요성을 검토하되 승인 전에는 소스를 수정하지 마라."
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "run_record",
+      "locator": "execution-summary",
+      "content": "source_change: not_applied\nregression_check: not_applicable"
+    }
+  ],
+  "exit_status": 0,
+  "errors": [],
+  "notes": [
+    "No source mutation was authorized."
+  ]
+}

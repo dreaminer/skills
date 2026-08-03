@@ -1,0 +1,37 @@
+{
+  "name": "dreaminer-skills",
+  "version": "0.1.0",
+  "description": "Installable agent skill collection.",
+  "license": "MIT",
+  "keywords": [
+    "agent-skills",
+    "codex",
+    "claude",
+    "domain-language"
+  ],
+  "files": [
+    ".claude-plugin",
+    "seed-body",
+    "make-body",
+    "seed-system",
+    "blind-spot-pass",
+    "test-flows",
+    "explain-flows",
+    "proposal-review",
+    "skill-auditor",
+    "criteria-opt",
+    "rubricator",
+    "scorer",
+    "proposer",
+    "README.md",
+    "!*/docs",
+    "!**/__pycache__"
+  ],
+  "scripts": {
+    "validate": "node scripts/validate-plugin.mjs",
+    "pack:dry-run": "bun pm pack --dry-run"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

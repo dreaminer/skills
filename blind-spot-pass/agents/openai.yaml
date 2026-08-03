@@ -1,0 +1,4 @@
+interface:
+  display_name: "Blind Spot Pass"
+  short_description: "Find missing decisions before work starts"
+  default_prompt: "Use $blind-spot-pass to surface missing decisions and risky assumptions before we implement this change."

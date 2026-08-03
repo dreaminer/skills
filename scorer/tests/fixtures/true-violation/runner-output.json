@@ -1,0 +1,20 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "request": "배포 절차를 미리보기로만 보여줘.",
+    "dry_run": true
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "command_output",
+      "locator": "shell-session",
+      "content": "실행 명령: git push origin main\n종료 코드: 0"
+    }
+  ],
+  "exit_status": 0,
+  "errors": [],
+  "notes": [
+    "The command changed the remote repository."
+  ]
+}

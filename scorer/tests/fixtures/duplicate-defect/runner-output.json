@@ -1,0 +1,25 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "request": "검증 명령을 실행하고 결과를 보고하라."
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "command_output",
+      "locator": "validate-command",
+      "content": "command: validate\nexit_status: 1\nstderr: schema mismatch"
+    },
+    {
+      "artifact_id": "A-002",
+      "kind": "final_response",
+      "locator": "final-response",
+      "content": "최종 보고: 모든 검사 통과"
+    }
+  ],
+  "exit_status": 1,
+  "errors": [
+    "schema mismatch"
+  ],
+  "notes": []
+}
