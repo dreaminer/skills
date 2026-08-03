@@ -1,0 +1,45 @@
+[
+  {
+    "sub_scorer": "omission",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "실행 성공 판정",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "distortion",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "실행 성공 판정",
+          "score": 85,
+          "deductions": [
+            {
+              "severity": "Major",
+              "penalty_points": 15,
+              "reason": "검증 실패가 발생했는데 성공으로 잘못 판정함",
+              "evidence": "A-001에서 \"검증 실패\" 문구가 발견됨"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "violation_excess",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "실행 성공 판정",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  }
+]

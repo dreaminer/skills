@@ -1,0 +1,7 @@
+interface:
+  display_name: "Explain Flows"
+  short_description: "Explain flows from verified project tests"
+  default_prompt: "Use $explain-flows to write a compact project-flow guide from tests listed by a ready TEST_FLOWS_RESULT."
+
+policy:
+  allow_implicit_invocation: false

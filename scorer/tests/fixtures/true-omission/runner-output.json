@@ -1,0 +1,17 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "request": "대상 스킬의 세 항목을 감사하고 최종 판정을 보고하라."
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "final_response",
+      "locator": "final-response",
+      "content": "분석 결과\n- 검사 대상: fixture-skill\n- 확인 항목: 3개\n- 최종 결과: 기록하지 않음"
+    }
+  ],
+  "exit_status": 0,
+  "errors": [],
+  "notes": []
+}

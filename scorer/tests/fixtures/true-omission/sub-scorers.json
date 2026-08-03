@@ -1,0 +1,45 @@
+[
+  {
+    "sub_scorer": "omission",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "결과 완결성",
+          "score": 75,
+          "deductions": [
+            {
+              "severity": "Critical",
+              "penalty_points": 25,
+              "reason": "후속 게이트가 요구하는 최종 판정이 누락됨",
+              "evidence": "A-001(final-response): \"최종 결과: 기록하지 않음\""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "distortion",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "결과 완결성",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "violation_excess",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "결과 완결성",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  }
+]

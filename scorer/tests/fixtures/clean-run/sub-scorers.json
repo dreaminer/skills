@@ -1,0 +1,38 @@
+[
+  {
+    "sub_scorer": "omission",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "결과 정확성",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "distortion",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "결과 정확성",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "violation_excess",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "결과 정확성",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  }
+]

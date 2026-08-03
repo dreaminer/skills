@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acceptance와 Characterization 빠른 판별</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body><main>
+  <h1>두 테스트의 판별 기준</h1>
+  <p class="rule">같은 테스트 코드라도 기대값을 어디서 가져왔느냐에 따라 역할이 달라진다.</p>
+  <table>
+    <tr><th></th><th>Characterization</th><th>Acceptance</th></tr>
+    <tr><th>비교 기준</th><td>현재 구현에서 관찰한 행동</td><td>사람이 합의한 원하는 행동</td></tr>
+    <tr><th>시간 방향</th><td>과거·현재를 보존</td><td>변경 후 목표를 제시</td></tr>
+    <tr><th>처음 작성할 때</th><td>기존 코드에서 통과해야 함</td><td>미구현 변경이라면 실패해야 함</td></tr>
+    <tr><th>실패의 기본 의미</th><td>기존 행동이 달라짐</td><td>요구사항을 아직 충족하지 못함</td></tr>
+    <tr><th>업무적 옳음</th><td>보장하지 않음</td><td>합의된 예제 범위에서 보장</td></tr>
+  </table>
+
+  <h2>판별 질문</h2>
+  <ol>
+    <li>기대값을 실행 결과에서 복사했는가? → Characterization</li>
+    <li>기대값을 요구사항·Essential 합의에서 가져왔는가? → Acceptance</li>
+    <li>둘 다 해당하는가? → 이미 올바르다고 합의된 기존 행동을 동시에 보존하는 테스트</li>
+  </ol>
+
+  <h2>Characterization이 필요 없는 경우</h2>
+  <p>기존 acceptance·regression suite가 변경 영역에서 보존해야 할 행동을 이미 충분히 검증한다면 추가 characterization test는 필요 없다. 테스트되지 않은 현재 행동 중 이번 변경으로 깨질 위험이 있는 것만 보완한다.</p>
+
+  <h2>Characterization의 경제성</h2>
+  <table>
+    <tr><th>더 유연한가?</th><td>아니다. 현재 행동을 고정하므로 오히려 변경에 민감할 수 있다.</td></tr>
+    <tr><th>더 넓게 커버하는가?</th><td>아니다. 입력과 assertion으로 정한 범위만 커버한다.</td></tr>
+    <tr><th>왜 쓰는가?</th><td>올바른 기대값을 합의하지 않고도 현재 실행값으로 빠르게 회귀 기준선을 만들 수 있기 때문이다.</td></tr>
+    <tr><th>언제 Acceptance가 낫나?</th><td>원하는 행동과 기대값을 이미 알고 있거나 확인할 수 있을 때다.</td></tr>
+  </table>
+
+  <h2>조직에서의 운영</h2>
+  <p>일반 제품 개발에서는 acceptance·unit·integration·regression 테스트가 상시 CI suite를 이룬다. Characterization은 별도 영구 계층이라기보다 테스트가 부족한 레거시 코드의 변경, 리플랫폼, 동등성 검증 때 필요한 범위에 추가되는 역할이다.</p>
+
+  <p><a href="../lessons/0002-acceptance-vs-characterization.html">주문 취소 예제로 이해하기</a> · <a href="../lessons/0003-industry-test-portfolios.html">조직의 테스트 운영 보기</a></p>
+</main></body>
+</html>

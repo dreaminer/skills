@@ -1,0 +1,14 @@
+{
+  "case_id": "misquoted-context",
+  "category": "false_positive_context_truncation",
+  "dimension": "실행 성공 판정",
+  "criteria": "검증 출력의 완전한 문장을 읽어 실패 유무와 최종 통과 상태를 정확하게 판정한다.",
+  "truth": "NO_DEFECT",
+  "score_expectation": {
+    "operator": "eq",
+    "value": 100
+  },
+  "expected_gate": "SUCCESS",
+  "required_evidence": [],
+  "rationale": "전체 문장은 '검증 실패 없음'이며 exit_status도 0이므로 성공 판정이 정확하다."
+}

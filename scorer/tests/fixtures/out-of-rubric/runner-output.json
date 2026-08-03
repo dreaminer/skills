@@ -1,0 +1,22 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "items": [
+      "a",
+      "b",
+      "c",
+      "d"
+    ]
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "final_response",
+      "locator": "final-response",
+      "content": "처리 항목은 4개다."
+    }
+  ],
+  "exit_status": 0,
+  "errors": [],
+  "notes": []
+}

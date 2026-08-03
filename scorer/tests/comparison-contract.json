@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "runs_per_variant": 3,
+  "require_metrics": true,
+  "require_matching_execution": true
+}

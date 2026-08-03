@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Characterization Test 빠른 참조</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body><main>
+  <h1>Characterization Test</h1>
+  <p class="rule">수정 전 코드의 실제 관찰 결과를 테스트로 고정한다.</p>
+  <table>
+    <tr><th>묻는 질문</th><td>현재 시스템은 무엇을 하는가?</td></tr>
+    <tr><th>기대값의 출처</th><td>실행하여 관찰한 현재 결과</td></tr>
+    <tr><th>목적</th><td>의도하지 않은 행동 변화 감지</td></tr>
+    <tr><th>보장하지 않는 것</th><td>현재 행동이 업무적으로 옳다는 것</td></tr>
+    <tr><th>좋은 경계</th><td>응답, 저장 변화, 발행 이벤트처럼 외부에서 관찰 가능한 결과</td></tr>
+  </table>
+  <h2>작성 순서</h2>
+  <ol>
+    <li>변경할 흐름과 관찰 가능한 경계를 고른다.</li>
+    <li>대표 입력으로 현재 코드를 실행한다.</li>
+    <li>관찰된 결과를 기대값으로 기록한다.</li>
+    <li>테스트가 반복해서 같은 결과로 통과하는지 확인한다.</li>
+    <li>그 뒤 구현을 변경한다.</li>
+  </ol>
+  <p><a href="../lessons/0001-characterization-test.html">짧은 수업과 예제 보기</a></p>
+</main></body>
+</html>

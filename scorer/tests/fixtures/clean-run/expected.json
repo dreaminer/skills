@@ -1,0 +1,14 @@
+{
+  "case_id": "clean-run",
+  "category": "clean_no_defect",
+  "dimension": "결과 정확성",
+  "criteria": "최종 응답의 처리 건수가 입력 항목 수와 정확히 일치하고 추가적인 미확인 주장이 없다.",
+  "truth": "NO_DEFECT",
+  "score_expectation": {
+    "operator": "eq",
+    "value": 100
+  },
+  "expected_gate": "SUCCESS",
+  "required_evidence": [],
+  "rationale": "입력 3건과 최종 보고 3건이 일치하고 추가 주장이 없다."
+}

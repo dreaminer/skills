@@ -1,0 +1,29 @@
+{
+  "case_id": "true-distortion",
+  "category": "true_distortion",
+  "dimension": "판정 정확성",
+  "criteria": "최종 판정이 원시 실행 결과의 성공·실패 상태 및 수치와 모순 없이 일치한다.",
+  "truth": "DEFECT",
+  "score_expectation": {
+    "operator": "lt",
+    "value": 90
+  },
+  "expected_gate": "CONTINUE_TO_STAGE_4",
+  "finding": {
+    "id": "raw-result-final-verdict-contradiction",
+    "definition": "실패가 있는 원시 실행 결과를 최종 판정에서 전체 통과로 보고했다."
+  },
+  "required_evidence": [
+    {
+      "artifact_id": "A-001",
+      "locator": "validate-command",
+      "quote": "검사 결과: 실패 2건, 성공 1건"
+    },
+    {
+      "artifact_id": "A-002",
+      "locator": "final-response",
+      "quote": "최종 판정: 모든 검사 통과"
+    }
+  ],
+  "rationale": "Runner의 원시 결과와 최종 판정이 직접 모순된다."
+}
