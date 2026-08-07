@@ -107,9 +107,8 @@ B 통과 후 다음 순서를 지킨다.
 
 1. Domain 후보를 먼저, 이어서 UseCase 후보를 캐노니컬 2문서로 materialize한다.
 2. 모든 UseCase `[Term]`이 DOMAIN에 있고 `{term}`·후보 라벨이 새지 않았는지 검사한다.
-3. 기존 대상 파일이 있으면 충돌 내용을 보여주고 덮어쓰기·병합·보류를 결정받는다.
-4. [artifacts](artifacts.md)의 승급 경로에 적힌 고정 인계 문서를 `docs/`에 둔다. 내용이 없으면
-   헤더와 `없음` 상태를 써서 입력 계약을 고정한다.
+3. 기존 대상 파일과 충돌하면 [artifacts](artifacts.md)의 충돌 규칙대로 사용자 결정을 받는다.
+4. [artifacts](artifacts.md)의 승급 경로에 적힌 고정 인계 문서를 그 포맷 규칙대로 `docs/`에 둔다.
 5. artifacts의 선택 감사 조건을 만족하면 기각 기록도 이동한다.
 6. CANDIDATES 잔여는 사용자에게 질문으로 남길 가치가 있으면 QUESTIONS에 옮기고, 아니면 폐기한다.
    미비준 후보를 LATER로 보내지 않는다.

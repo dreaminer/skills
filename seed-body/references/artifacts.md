@@ -144,9 +144,8 @@ Evidence:
 ## SEED_BODY_HARVEST.md
 
 재발·공기·클러스터를 **제안**하되 이름과 의미를 결정하지 않는다. 구조는 클러스터 +
-등장 흐름 목록으로 작성한다. 용어 자격: 재발하거나, 제거하면 흐름을 말할 수 없는
-load-bearing 싱글턴. harvest 대상은 Essential 코퍼스뿐이다 — 파킹의 실행 수단 표현은
-용어를 낳지 않는다.
+등장 흐름 목록으로 작성한다. 용어 자격과 harvest 대상 범위는
+[closing-gate](closing-gate.md)의 harvest 절차를 따른다.
 
 ## SEED_BODY_CANDIDATES.md — SB-nnn 후보 계약
 
@@ -177,7 +176,7 @@ Blocked by:
 - `Type`: `essential-domain | essential-usecase | unclassified-fragment`.
   `unclassified-fragment`는 admission 대기 원문이며 캐노니컬 승급 대상이 아니다. Essential로
   확인되면 `EF-nnn`으로, 받치는 Essential이 있는 실행 수단으로 확인되면 `SF-nnn`으로 옮긴다.
-- `Label`: `[가정] [보류] [충돌] [층미분류]` 중 0~1개. 라벨은 이 큐 전용이다 — 사용자가
+- `Label`: `[가정] [충돌] [층미분류]` 중 0~1개. 라벨은 이 큐 전용이다 — 사용자가
   직접 말했거나 승인한 항목은 라벨 없이 곧장 비준 대기(또는 배치 비준에 합류)한다.
 - `Subject`는 Essential 후보에서만 쓰는 plain text이며 `[]`/`{}`를 넣지 않는다. 승급 시
   `## [Subject]` 헤더가 된다. `unclassified-fragment`는 Subject 대신 raw `Content`와 Evidence,
@@ -227,15 +226,4 @@ Why-risk:
   포맷과 충족 판정은 [closing-gate](closing-gate.md)를 따른다.
 - **SEED_BODY_REJECTED.md** — `## SR-nnn` + Type/Subject/Reason/Evidence(턴 참조).
   사용자가 명시적으로 기각한 것만. 검토 대기 중인 후보는 기각이 아니다. 내용이 있으면 종료
-  패키지에 보존하고, 재실행 때 초기 기각 레지스트리로 읽는다.
-
-## 공급과 수요
-
-- **CANDIDATES = 공급.** 지금까지 나온 것 중 아직 결정 안 된 것. 성공의 모습은 텅 비는 것.
-- **CRITERIA = 수요.** 끝나려면 결정돼 있어야 하는 것. 성공의 모습은 전부 체크되는 것.
-- **PRIOR = 위험순 탐색 수요.** bounded 핵심 blind spot. 성공의 모습은 전 항목 처분.
-
-매 턴의 회전은 수요가 공급을 끌어당기는 과정이다: 발산 국면에서는 PRIOR 미처분 항목과
-빈 슬롯이, 게이트 국면에서는 CRITERIA의 가장 값진 미답 질문이 →
-CANDIDATES에서 재료를 찾아 비준을 묻고 → 재료도 사용자도 고갈이면 예시답안을 [가정]으로
-만들어 근거와 함께 묻는다.
+  패키지에 보존한다.
