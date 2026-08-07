@@ -170,13 +170,17 @@ Evidence:
 Requirements:
 
 - `ID` is stable and unique.
-- `Basis` is `proposed` for seed-system output.
+- `Basis` is `inherited` when every clause traces to ratified Essential content, `proposed` when
+  any clause adds system-designed behavior; when unsure, use `proposed`.
 - `Seam` is the public boundary where every `Then` can be asserted.
 - Given/When/Then use Essential language and observable outcomes.
 - Evidence quotes user utterance or ratification.
+- When an AC covers an inherited use case from `ESSENTIAL_USECASE.md`, Evidence also names it as
+  `ESSENTIAL_USECASE #n (subject)`. If the number and subject later disagree, the subject governs.
 - Split scenarios when one seam cannot faithfully observe all outcomes.
 
-Contract hash fields are ID, Subject, Basis, Seam, Given, When, and Then. Exclude Evidence.
+Contract hash fields are ID, Subject, Seam, Given, When, and Then. Exclude Basis and Evidence because
+provenance changes must not stale the test.
 
 When any included field changes semantically, recompute the hash and invalidate each affected test
 record immediately:

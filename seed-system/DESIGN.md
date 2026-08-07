@@ -99,13 +99,15 @@ Evidence:
 요구 사항:
 
 - 안정적이고 유일한 `AC-{nnn}` ID.
-- `seed-system`에서 새로 설계한 계약은 `Basis: proposed`.
+- 모든 절이 비준된 Essential 내용으로 소급되면 `Basis: inherited`, 한 절이라도 새로 설계한
+  System 행동을 추가하면 `Basis: proposed`. 애매하면 `proposed`.
 - 내부 호출 순서가 아니라 결과를 관측할 수 있는 가장 낮고 안정적인 `Seam`.
 - Essential 언어로 쓴 구체적인 Given/When/Then.
 - 사용자 발화와 비준 턴을 가리키는 Evidence.
 - 성공뿐 아니라 v1에 필요한 실패, 역방향, 재시도, 충돌 흐름.
 
-계약 해시는 ID, Subject, Basis, Seam, Given, When, Then을 포함하고 Evidence는 제외한다. 문구가
+계약 해시는 ID, Subject, Seam, Given, When, Then을 포함하고 Basis와 Evidence는 제외한다.
+provenance 수정은 테스트를 stale하게 만들지 않는다. 문구가
 실질적으로 바뀌면 연결된 `red`/`green` 기록을 즉시
 `gap — contract changed; test relink required`로 내린다. 이전 테스트 경로와 마커는 Notes에
 감사 기록으로 남기되 stale 마커를 활성 Marker로 유지하지 않는다. 현재 해시로 테스트를

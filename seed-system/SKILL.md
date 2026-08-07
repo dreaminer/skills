@@ -113,13 +113,14 @@ Evidence:
 Require:
 
 - a stable unique `AC-{nnn}` ID;
-- `Basis: proposed` for newly designed greenfield behavior;
+- `Basis: inherited` when every clause traces to ratified Essential content, `Basis: proposed`
+  when any clause adds system-designed behavior — when unsure, use `proposed`;
 - one observable `Seam` stated without internal call topology;
 - concrete Given/When/Then clauses in inherited Essential language;
 - user utterance or ratification Evidence;
 - success, failure, reverse, retry, and conflict scenarios when they are v1-relevant.
 
-The contract hash covers ID, Subject, Basis, Seam, Given, When, and Then. Exclude Evidence so
+The contract hash covers ID, Subject, Seam, Given, When, and Then. Exclude Basis and Evidence so
 provenance edits do not stale the test. After any semantic contract edit, change every affected
 `red` or `green` record to `gap — contract changed; test relink required`. Preserve the previous
 test path and marker in Notes for audit, but do not keep the stale marker as the active Marker.
@@ -129,7 +130,7 @@ test path and marker in Notes for audit, but do not keep the stale marker as the
 Use `SEED_SYSTEM_TESTS.md` to record the declared test command, test directory, and one record per
 Acceptance ID:
 
-- `red` — a linked executable test exists and fails for the missing proposed behavior;
+- `red` — a linked executable test exists and fails for the missing, not-yet-implemented behavior;
 - `green` — the linked executable test passes;
 - `gap — <concrete reason>` — no runnable or faithful test exists yet.
 
@@ -139,7 +140,7 @@ For `red` and `green`, require a test path and marker:
 @acceptance: AC-001 sha256:<canonical-contract-hash>
 ```
 
-Normal implementation handoff needs RED for proposed behavior. A gap is honest but not verified.
+Normal implementation handoff needs RED regardless of Basis. A gap is honest but not verified.
 Completion requires every v1 Acceptance to be linked with the current hash and GREEN.
 
 Do not implement a second TDD engine here. When the user moves from design to test authoring, hand
@@ -184,6 +185,10 @@ seed-body must run first and stop this workflow.
 - Do not modify frozen Essential files.
 - Do not publish `SYSTEM_DOMAIN.md` or `SYSTEM_USECASE.md` as new canonical output.
 - Do not auto-promote parked SF items, legacy System prose, or GREEN tests into desired behavior.
+- Do not stage an AC that only restates an inherited Essential use case in Given/When/Then form;
+  require at least one recorded decision beyond the inherited sentence: a decidable boundary, an
+  exclusion, or a system-flow behavior. If no v1-relevant decision remains, a recorded finding that
+  only seam selection was needed satisfies this requirement.
 - Do not place framework, schema, queue, route, polling interval, or selector choices in
   `ACCEPTANCE.md` unless they are user-visible business facts.
 - Do not ask the user to design every technical detail. Propose implementation defaults after the

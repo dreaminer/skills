@@ -16,7 +16,7 @@ them silently.
 
 | Check | Question | Route |
 |---|---|---|
-| Coverage | Does each inherited Essential outcome have Acceptance coverage? | Criteria |
+| Coverage | Does each inherited Essential outcome have at least one AC naming it in Evidence? | Criteria |
 | Testability | Can every Then be observed at the declared seam? | Criteria |
 | Atomicity | Does each scenario test one behavior at one seam? | Candidate rewrite |
 | Boundary | Did implementation details leak into Acceptance? | Candidate rewrite or proposal |
@@ -78,7 +78,9 @@ Stage A asks whether the criteria are the right definition of enough:
 ```
 
 Stage B presents the full staged `ACCEPTANCE.md`, LATER summary, QUESTIONS summary, and notable
-rejections in one batch:
+rejections in one batch. Group scenarios by `Basis`: for `inherited`, ask the user to confirm the
+mapping to ratified Essential content and that the declared seam observes its result; for
+`proposed`, ask for content ratification:
 
 ```text
 이 Acceptance 몸체로 v1 계약을 확정할까? 바꿀 항목만 짚어줘.
