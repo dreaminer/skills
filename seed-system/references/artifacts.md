@@ -133,7 +133,7 @@ Blocked by:
 - Seam confirmation
 ```
 
-Labels are queue-only: `[assumption]`, `[deferred]`, `[conflict]`, `[unclassified-layer]`.
+Labels are queue-only: `[assumption]`, `[conflict]`, `[unclassified-layer]`.
 Canonical `ACCEPTANCE.md` must not contain labels or `{term}` markers.
 
 ## ACCEPTANCE.md
