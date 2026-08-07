@@ -133,7 +133,7 @@ Blocked by:
 - Seam confirmation
 ```
 
-Labels are queue-only: `[assumption]`, `[conflict]`, `[unclassified-layer]`.
+Labels are queue-only: `[assumption]`.
 Canonical `ACCEPTANCE.md` must not contain labels or `{term}` markers.
 
 ## ACCEPTANCE.md
@@ -182,6 +182,13 @@ Requirements:
 Contract hash fields are ID, Subject, Seam, Given, When, and Then. Exclude Basis and Evidence because
 provenance changes must not stale the test.
 
+Canonical hash computation: build one line per token in field order — the literal field name, then
+that field's content lines (`ID`, the id, `Subject`, the subject, then `Seam`, `Given`, `When`,
+`Then` each followed by their lines). Strip each content line's leading `- `, trim it, collapse
+internal whitespace to single spaces, and drop empty lines. Join all lines with `\n`, normalize to
+Unicode NFC, encode UTF-8, and take the sha256 hex digest. `scripts/check-acceptance.py` implements
+this definition and is its executable reference.
+
 When any included field changes semantically, recompute the hash and invalidate each affected test
 record immediately:
 
@@ -215,6 +222,12 @@ Test directory:
 Acceptance:
 - AC-001
 
+Risk:
+- A duplicate delivery creates two order confirmations.
+
+Layer:
+- integration
+
 Status:
 - red
 
@@ -233,6 +246,11 @@ Allowed statuses:
 - `red`
 - `green`
 - `gap — <concrete reason>`
+
+Every record states its worst v1-relevant failure outcome as `Risk` and the narrowest harness that
+can refute it as `Layer`: `unit` (policy, calculation, boundary values), `integration` (data or
+external connections), `browser` (user-visible flow), or `observability` (performance or
+operations). Seam says where to observe; Layer says what kind of test refutes the risk.
 
 Use `gap — test harness not created yet` when the design is complete but `$tdd` has not authored
 the runnable test. Replace the gap with `red` or `green` once a faithful test exists.
@@ -276,12 +294,3 @@ technology choice is itself user-visible product behavior.
 - `SEED_SYSTEM_QUESTIONS.md` stores deferred decisions and `back-to-Essential` gaps. Do not resolve
   Essential gaps inside seed-system.
 - `SEED_SYSTEM_REJECTED.md` stores explicit rejected candidates with reason and Evidence.
-
-## Supply and demand
-
-- Raw flows and candidates are supply.
-- Criteria, inherited Essential coverage, and category priors are demand.
-- Acceptance is the ratified contract.
-- Tests are the executable constraint.
-
-The loop pulls supply toward demand until the user can ratify a complete, testable Acceptance body.

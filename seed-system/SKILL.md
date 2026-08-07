@@ -46,6 +46,10 @@ Read `DESIGN.md` before changing these rules.
   and implementation hints in working evidence or `SEED_SYSTEM_IMPL_PROPOSAL.md`; do not publish
   `SYSTEM_DOMAIN.md` or `SYSTEM_USECASE.md`.
 - Use one atomic `AC-{nnn}` Acceptance scenario per observable domain flow.
+- Do not stage an AC that only restates an inherited Essential use case in Given/When/Then form;
+  require at least one recorded decision beyond the inherited sentence: a decidable boundary, an
+  exclusion, or a system-flow behavior. If no v1-relevant decision remains, a recorded finding that
+  only seam selection was needed satisfies this requirement.
 - Choose the lowest stable public seam that can observe every `Then`. Do not pin private methods,
   internal call topology, or implementation-only collaborators.
 - Ask one question at a time during divergence. During convergence, batch-review the full body.
@@ -83,69 +87,34 @@ working evidence; do not auto-convert them.
 
 ## Acceptance contract
 
-Record one scenario per `## [Subject]`:
+`ACCEPTANCE.md` records one atomic scenario per observable domain flow: a stable unique `AC-{nnn}`
+ID, `Basis` (`inherited` when every clause traces to ratified Essential content, `proposed` when
+any clause adds system-designed behavior — when unsure, `proposed`), one observable `Seam` without
+internal call topology, decidable Given/When/Then in inherited Essential language, and user
+utterance or ratification Evidence. Include failure, reverse, retry, and conflict scenarios when
+they are v1-relevant.
 
-```md
-## [중복 없이 발주확인 반영]
-
-ID:
-AC-001
-
-Basis:
-proposed
-
-Seam:
-- 발주확인 채널 접점
-
-Given:
-- 반영되지 않은 [발주확인]이 있다.
-
-When:
-- 전송 도중 연결이 끊겨 같은 요청이 다시 전달된다.
-
-Then:
-- [발주확인]은 한 번만 반영된다.
-
-Evidence:
-- T12 (비준) "다시 보내도 두 번 잡히면 안 돼"
-```
-
-Require:
-
-- a stable unique `AC-{nnn}` ID;
-- `Basis: inherited` when every clause traces to ratified Essential content, `Basis: proposed`
-  when any clause adds system-designed behavior — when unsure, use `proposed`;
-- one observable `Seam` stated without internal call topology;
-- concrete Given/When/Then clauses in inherited Essential language;
-- user utterance or ratification Evidence;
-- success, failure, reverse, retry, and conflict scenarios when they are v1-relevant.
-
-The contract hash covers ID, Subject, Seam, Given, When, and Then. Exclude Basis and Evidence so
-provenance edits do not stale the test. After any semantic contract edit, change every affected
-`red` or `green` record to `gap — contract changed; test relink required`. Preserve the previous
-test path and marker in Notes for audit, but do not keep the stale marker as the active Marker.
+Each scenario carries a contract hash over its behavioral fields only (ID, Subject, Seam, Given,
+When, Then); Basis and Evidence stay outside the hash so provenance edits never stale a test. A
+semantic edit invalidates affected test records until the test is relinked under the current hash.
+The scenario format, canonical hash computation, and invalidation records are owned by
+`references/artifacts.md` — read it when staging or editing scenarios.
 
 ## Test lifecycle
 
-Use `SEED_SYSTEM_TESTS.md` to record the declared test command, test directory, and one record per
-Acceptance ID:
+`SEED_SYSTEM_TESTS.md` records the test command, test directory, and one record per Acceptance ID:
+`red` (linked test fails for the not-yet-implemented behavior), `green` (linked test passes), or
+`gap — <concrete reason>`. Red and green require a test path and an
+`@acceptance: AC-{nnn} sha256:<hash>` marker. Record formats, including each record's worst-failure
+`Risk` and narrowest verification `Layer`, are owned by `references/artifacts.md`.
 
-- `red` — a linked executable test exists and fails for the missing, not-yet-implemented behavior;
-- `green` — the linked executable test passes;
-- `gap — <concrete reason>` — no runnable or faithful test exists yet.
+Implementation handoff needs RED regardless of Basis; a gap is honest but not verified. Completion
+requires every v1 Acceptance linked with the current hash and GREEN. Verify structure, hash-marker
+linkage, and coverage mechanically with `scripts/check-acceptance.py`; it does not judge semantics,
+so semantic review stays a human/agent duty.
 
-For `red` and `green`, require a test path and marker:
-
-```text
-@acceptance: AC-001 sha256:<canonical-contract-hash>
-```
-
-Normal implementation handoff needs RED regardless of Basis. A gap is honest but not verified.
-Completion requires every v1 Acceptance to be linked with the current hash and GREEN.
-
-Do not implement a second TDD engine here. When the user moves from design to test authoring, hand
-the Acceptance IDs, hashes, seams, and expected assertions to `$tdd`. `$tdd` writes the tests and
-proves RED/GREEN.
+Do not implement a second TDD engine here. Hand the Acceptance IDs, hashes, seams, expected
+assertions, and per-scenario Risk/Layer to `$tdd`, which writes the tests and proves RED/GREEN.
 
 ## Workflow
 
@@ -180,18 +149,3 @@ Essential 몸체는 받았어. 어느 흐름부터 구현 판정 가능한 Accep
 If the package is missing, ask for its location. If the user confirms that none exists, say that
 seed-body must run first and stop this workflow.
 
-## Forbidden patterns
-
-- Do not modify frozen Essential files.
-- Do not publish `SYSTEM_DOMAIN.md` or `SYSTEM_USECASE.md` as new canonical output.
-- Do not auto-promote parked SF items, legacy System prose, or GREEN tests into desired behavior.
-- Do not stage an AC that only restates an inherited Essential use case in Given/When/Then form;
-  require at least one recorded decision beyond the inherited sentence: a decidable boundary, an
-  exclusion, or a system-flow behavior. If no v1-relevant decision remains, a recorded finding that
-  only seam selection was needed satisfies this requirement.
-- Do not place framework, schema, queue, route, polling interval, or selector choices in
-  `ACCEPTANCE.md` unless they are user-visible business facts.
-- Do not ask the user to design every technical detail. Propose implementation defaults after the
-  Acceptance body is closed.
-- Do not claim completion from natural-language review alone. Completion requires current linked
-  tests to be GREEN, or an explicit non-completion handoff/gap.

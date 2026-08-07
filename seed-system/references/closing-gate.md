@@ -115,10 +115,11 @@ Create or update `SEED_SYSTEM_TESTS.md` after Acceptance ratification.
 For each AC:
 
 - choose or confirm the seam before test authoring;
+- state the worst-failure `Risk` and pick the narrowest refuting `Layer` as specified in
+  [artifacts](artifacts.md);
 - record `gap — test harness not created yet` if no test exists;
-- after a semantic Acceptance edit, replace any affected `red` or `green` status with
-  `gap — contract changed; test relink required`, move the previous path and marker to Notes, and
-  remove the stale active Marker;
+- after a semantic Acceptance edit, invalidate affected `red`/`green` records as specified in
+  [artifacts](artifacts.md);
 - when `$tdd` authors the test, replace the gap with `red` once the missing behavior fails as
   expected;
 - after implementation, record `green` only when the current marker hash is linked and the test
@@ -137,8 +138,13 @@ status is not implementation-complete. Return a `$tdd` handoff with:
 - AC IDs and contract hashes;
 - seams;
 - expected assertions per Then;
+- worst-failure risk and chosen verification layer per AC;
 - proposed test command and directory;
 - current gaps.
+
+Before claiming completion, run `scripts/check-acceptance.py` against the project `docs/` and
+declared test directory, and resolve every reported failure. It verifies structure, hash-marker
+linkage, and coverage; semantic review stays with the human and agent.
 
 Completion requires every v1 AC to be `green` with the current hash. Otherwise report the exact
 non-complete state: RED pending implementation, gap pending test harness, or question pending
