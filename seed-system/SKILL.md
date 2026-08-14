@@ -23,8 +23,8 @@ constraint on implementation. Do not treat a GREEN test as evidence that the hum
 behavior; ratification is still the truth-maker.
 
 This skill does not write production code and does not author tests. It prepares the contract,
-the agreed public seams, and the test-link records that a later `$tdd` workflow can use. `$tdd` is
-a handoff method for test authoring, not a runtime dependency of this skill.
+the agreed public seams, and the test-link records that a later `$seed-tdd` workflow consumes.
+`$seed-tdd` adapts TDD to this handoff protocol; it is not a runtime dependency of this skill.
 
 Read `DESIGN.md` before changing these rules.
 
@@ -108,13 +108,16 @@ The scenario format, canonical hash computation, and invalidation records are ow
 `@acceptance: AC-{nnn} sha256:<hash>` marker. Record formats, including each record's worst-failure
 `Risk` and narrowest verification `Layer`, are owned by `references/artifacts.md`.
 
-Implementation handoff needs RED regardless of Basis; a gap is honest but not verified. Completion
-requires every v1 Acceptance linked with the current hash and GREEN. Verify structure, hash-marker
-linkage, and coverage mechanically with `scripts/check-acceptance.py`; it does not judge semantics,
-so semantic review stays a human/agent duty.
+Implementation handoff needs RED evidence regardless of Basis; a gap is honest but not verified.
+Missing behavior uses an observed working-tree RED. Behavior already present before its AC slice may
+use `$seed-tdd`'s isolated sensitivity RED before recording `PREEXISTING_GREEN`. Completion requires
+every v1 Acceptance linked with the current hash and GREEN. Verify structure, hash-marker linkage,
+and coverage mechanically with `scripts/check-acceptance.py`; it does not judge semantics, so
+semantic review stays a human/agent duty.
 
-Do not implement a second TDD engine here. Hand the Acceptance IDs, hashes, seams, expected
-assertions, and per-scenario Risk/Layer to `$tdd`, which writes the tests and proves RED/GREEN.
+Do not implement a TDD engine here. Hand the Acceptance IDs, hashes, seams, expected assertions, and
+per-scenario Risk/Layer to `$seed-tdd`, which links the tests and proves RED/GREEN one slice at a
+time.
 
 ## Workflow
 
@@ -133,7 +136,7 @@ assertions, and per-scenario Risk/Layer to `$tdd`, which writes the tests and pr
 6. After Acceptance is ratified, propose implementation defaults by area: storage, external ports,
    sync/mirroring, stack, deployment, test harness. Ask the user to mark only changes.
 7. Prepare `SEED_SYSTEM_TESTS.md` records. If tests are not authored yet, record concrete gaps or
-   return a `$tdd` handoff with the scenario IDs, hashes, seams, and intended assertions.
+   return a `$seed-tdd` handoff with the scenario IDs, hashes, seams, and intended assertions.
 8. Materialize the accepted documents and route the next step. Do not start PRD, ticketing, TDD,
    prototype, or implementation unless the user asks.
 
@@ -148,4 +151,3 @@ Essential 몸체는 받았어. 어느 흐름부터 구현 판정 가능한 Accep
 
 If the package is missing, ask for its location. If the user confirms that none exists, say that
 seed-body must run first and stop this workflow.
-

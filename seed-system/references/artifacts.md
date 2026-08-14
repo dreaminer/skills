@@ -201,8 +201,8 @@ Notes:
 - Previous marker: @acceptance: AC-001 sha256:<stale-contract-hash>
 ```
 
-Remove the stale active `Marker` field. A later `$tdd` cycle must update or replace the test, attach
-the current marker, and demonstrate `red` or `green` before that status can be restored.
+Remove the stale active `Marker` field. A later `$seed-tdd` cycle must update or replace the test,
+attach the current marker, and demonstrate `red` or `green` before that status can be restored.
 
 ## SEED_SYSTEM_TESTS.md
 
@@ -252,8 +252,8 @@ can refute it as `Layer`: `unit` (policy, calculation, boundary values), `integr
 external connections), `browser` (user-visible flow), or `observability` (performance or
 operations). Seam says where to observe; Layer says what kind of test refutes the risk.
 
-Use `gap — test harness not created yet` when the design is complete but `$tdd` has not authored
-the runnable test. Replace the gap with `red` or `green` once a faithful test exists.
+Use `gap — test harness not created yet` when the design is complete but `$seed-tdd` has not
+authored the runnable test. Replace the gap with `red` or `green` once a faithful test exists.
 Use `gap — contract changed; test relink required` whenever an Acceptance semantic edit invalidates
 a previously linked `red` or `green` record.
 

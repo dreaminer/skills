@@ -1,0 +1,3 @@
+@acceptance: AC-001 sha256:9840a2ed8f1336ed74e4986b47f09fbd570ddf44c68f8ead5d77e5b63797d2bd
+
+Structural fixture: the Order creation API returns the created Order ID.
