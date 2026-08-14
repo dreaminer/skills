@@ -32,8 +32,8 @@ greenfield 구현을 위한 독립적인 Acceptance 몸체를 만든다.
   -> raw 도메인 흐름과 설계 제약
   -> 사람이 비준하는 Acceptance 계약
   -> 구현 기본안 비준
-  -> TDD가 실행 테스트 작성 및 RED 확인
-  -> 구현
+  -> Seed TDD가 실행 테스트 작성 및 RED 확인
+  -> 최소 구현 및 GREEN 확인
   -> GREEN으로 완료 판정
 ```
 
@@ -107,9 +107,9 @@ Evidence:
 
 ## 테스트 생명주기
 
-`seed-system`은 Acceptance 계약과 테스트 연결 생명주기를 소유한다. 테스트 작성 기술 자체는
-`$tdd`에 위임한다. 즉, 이 스킬을 수정하거나 이후 프로젝트 테스트를 작성할 때 `$tdd`를 작업
-방식으로 사용할 수 있지만, `seed-system`의 구동이 `$tdd`에 런타임 의존한다는 뜻은 아니다.
+`seed-system`은 Acceptance 계약과 테스트 연결 생명주기의 스키마를 소유한다. 실행 테스트 작성,
+상태 갱신, 최소 구현 기술은 `$seed-tdd`에 위임한다. `$seed-tdd`는 범용 `$tdd`의 작업 원칙을
+seed-system 인계 계약에 맞게 적용하며, `seed-system`의 구동에는 런타임 의존하지 않는다.
 
 Acceptance별 상태:
 
@@ -126,7 +126,7 @@ Acceptance별 상태:
 
 1. Acceptance와 seam을 먼저 비준한다.
 2. `IMPL_PROPOSAL`에서 스택과 테스트 기반을 비준한다.
-3. `$tdd`가 최소 테스트 하네스와 Acceptance tests를 작성한다.
+3. `$seed-tdd`가 최소 테스트 하네스와 Acceptance tests를 작성한다.
 4. 구현 전 RED를 확인한다.
 5. 구현 후 GREEN과 전체 테스트 suite를 확인한다.
 
@@ -159,8 +159,9 @@ Then을 판정할 수 있는지 점검한다.
 
 ### 5. 실행 테스트 핸드오프
 
-각 AC ID, 계약 해시, seam, 테스트 명령 후보를 `$tdd`에 넘긴다. `$tdd`가 모든 Then에 대응하는
-assertion을 작성하고 RED를 확인한다. 마커나 RED exit code만으로 테스트 충실도를 추론하지 않는다.
+각 AC ID, 계약 해시, seam, 테스트 명령 후보를 `$seed-tdd`에 넘긴다. `$seed-tdd`가 모든 Then에
+대응하는 assertion을 작성하고 RED를 확인한 뒤 최소 구현으로 GREEN을 만든다. 마커나 RED exit
+code만으로 테스트 충실도를 추론하지 않는다.
 
 ### 6. 구현 및 완료 게이트
 
@@ -194,7 +195,7 @@ flow tests를 입력으로 Essential 의미만 복원하며 Acceptance 계약이
 |---|---|---|
 | 출발점 | 사용자 의도와 코드 없는 Essential | 기존 코드와 qualified flow evidence |
 | 사람용 캐노니컬 | `ESSENTIAL_DOMAIN.md` + `ACCEPTANCE.md` | `ESSENTIAL_DOMAIN.md` + `ESSENTIAL_USECASE.md` |
-| 테스트 관계 | `$tdd`에 RED/GREEN 작성·연결을 인계 | 이미 qualified된 테스트를 읽기 전용 입력으로 소비 |
+| 테스트 관계 | `$seed-tdd`에 RED/GREEN 작성·연결을 인계 | 이미 qualified된 테스트를 읽기 전용 입력으로 소비 |
 | Acceptance 소유 | 생성·비준·해시·연결 상태 관리 | 생성·변환·관리하지 않음 |
 | 완료 판정 | 모든 v1 Acceptance 테스트 GREEN | Essential 의미의 사람 비준과 구조 검증 |
 

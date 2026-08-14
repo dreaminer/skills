@@ -120,7 +120,7 @@ For each AC:
 - record `gap — test harness not created yet` if no test exists;
 - after a semantic Acceptance edit, invalidate affected `red`/`green` records as specified in
   [artifacts](artifacts.md);
-- when `$tdd` authors the test, replace the gap with `red` once the missing behavior fails as
+- when `$seed-tdd` authors the test, replace the gap with `red` once the missing behavior fails as
   expected;
 - after implementation, record `green` only when the current marker hash is linked and the test
   passes.
@@ -133,7 +133,7 @@ observable assertion at the declared seam and that the test does not pin interna
 After Acceptance and implementation proposal ratification, write the accepted files under `docs/`.
 
 If no tests have been authored yet, materialization may still finish as a design handoff, but the
-status is not implementation-complete. Return a `$tdd` handoff with:
+status is not implementation-complete. Return a `$seed-tdd` handoff with:
 
 - AC IDs and contract hashes;
 - seams;
@@ -154,7 +154,7 @@ ratification.
 
 At the end, present categories only unless the user asks to continue:
 
-- `$tdd` test authoring;
+- `$seed-tdd` Acceptance implementation;
 - PRD/spec;
 - tickets;
 - prototype;

@@ -4,6 +4,7 @@
     "./seed-body",
     "./make-body",
     "./seed-system",
+    "./seed-tdd",
     "./blind-spot-pass",
     "./test-flows",
     "./explain-flows",
