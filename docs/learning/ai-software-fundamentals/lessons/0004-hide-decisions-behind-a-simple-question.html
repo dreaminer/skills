@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>단순한 질문 뒤에 결정을 숨기기</title>
+  <link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body><main>
+  <h1>단순한 질문 뒤에 결정을 숨기기</h1>
+  <p class="lede">네 번째 실패는 파일이 커서가 아니라, 호출자가 내부 정책의 조각을 알아야 해서 생긴다.</p>
+  <p class="rule">깊은 모듈은 큰 모듈이 아니다. 호출자에게는 작은 질문 하나만 주고, 함께 바뀌는 복잡한 결정을 안쪽에 모으는 경계다.</p>
+  <h2>영상의 주장</h2>
+  <p>영상은 AI가 만든 구조가 테스트하고 탐색하기 어려워지는 문제의 처방으로 ‘깊은 모듈’을 든다. 표면 인터페이스는 단순하지만 내부에는 유의미한 복잡성을 감추는 모듈이, 사람과 에이전트 모두가 다음 변경을 안전하게 찾고 검증하게 한다는 주장이다.</p>
+  <h2>2026년에도 맞는가?</h2>
+  <p><strong>맞다. 생성 속도가 높을수록 더 중요하다.</strong> 최신 에이전트는 얕은 헬퍼를 빠르게 늘릴 수 있다. 그러나 조건·데이터 접근·예외 처리가 호출자마다 퍼지면 다음 에이전트는 어디를 고쳐야 하는지 추측해야 한다. OpenAI의 에이전트 중심 개발 사례도 엄격한 의존 방향과 제한된 경계를 기계적으로 검증하고, 경계 안에서는 구현의 자유를 허용하는 방식을 택한다.</p>
+  <p>그러므로 “클래스를 만들까, 파일을 나눌까?”보다 <em>어떤 변경이 항상 같이 일어나는가?</em>를 묻는다. 함께 바뀌는 정책은 하나의 단순한 도메인 질문 뒤에 둔다.</p>
+  <h2>얕은 조각에서 깊은 질문으로</h2>
+  <p>앞 레슨의 알림 정책을 호출자가 조립하게 만들면 이렇게 된다.</p>
+  <pre><code>if (hasLoggedIn(user)
+    &amp;&amp; lastLoginAge(user, now) &gt; 30.days
+    &amp;&amp; !isTestAccount(user)
+    &amp;&amp; !isSuspended(user)) {
+  send(user)
+}</code></pre>
+  <p>이 경우 모든 호출자가 임계값·예외·조건 순서를 알아야 한다. 더 깊은 경계는 다음처럼 질문을 하나로 줄인다.</p>
+  <pre><code>if (notificationEligibility.shouldSend(user, now)) {
+  send(user)
+}</code></pre>
+  <p><code>shouldSend</code>의 계약만 테스트한다. ‘한 번 이상 로그인’, ‘30일 초과’, 내부 제외 규칙과 향후 데이터 조회 변경은 그 모듈 안에서 바꾼다.</p>
+  <h2>경계를 고르는 세 질문</h2>
+  <ol>
+    <li>이 조건들은 정책이 바뀔 때 함께 바뀌는가?</li>
+    <li>호출자가 중간 계산을 알아야 실제 결정을 내릴 수 있는가?</li>
+    <li>결과 계약만으로 내부를 바꿔도 호출자를 건드리지 않을 수 있는가?</li>
+  </ol>
+  <p>첫째가 “예”이고 뒤의 두 질문에 “아니오·예”라면, 그 정책을 하나의 모듈 질문 뒤에 숨길 시점이다.</p>
+  <h2>에이전트에 주는 지시</h2>
+  <pre><code>변경 전에, 함께 바뀌는 정책 조각을 찾아라.
+호출자가 알아야 하는 질문 하나와 그 결과 계약을 제안해라.
+조건·조회·예외의 조합은 모듈 내부에 두고, 호출자가 내부 헬퍼를 조립하지 않게 해라.
+계약 테스트와 의존 경계를 검증한 뒤 구현해라.</code></pre>
+  <h2>짧은 연습</h2>
+  <p>알림 발송기가 비활성 판정, 신규 가입자 제외, 테스트 계정 제외를 모두 직접 조합하고 있다. 가장 좋은 첫 리팩터링은?</p>
+  <ol type="A">
+    <li>각 조건을 별도 유틸리티로 더 많이 내보내 호출자가 조합하게 한다.</li>
+    <li><code>notificationEligibility.shouldSend(user, now)</code>처럼 결과 계약 하나로 정책을 감춘다.</li>
+    <li>모든 조건을 발송기 파일 맨 위에 주석으로 자세히 설명한다.</li>
+  </ol>
+  <details><summary>정답과 피드백</summary><p><strong>B.</strong> 함께 바뀌는 정책을 한 결과 계약 뒤에 모은다. A는 호출자가 내부를 계속 조립하게 해 결합을 늘린다. C는 이해를 돕지만 경계를 집행하지 못한다.</p></details>
+  <p>실제 코드에서 ‘조건 세 개 이상을 호출자가 조립하는 곳’ 하나를 찾아, 그 코드가 답해야 할 도메인 질문 한 문장으로 바꿔 보라. 그 질문이 좋은 모듈의 표면이다.</p>
+  <p>빠른 참고용 <a href="../reference/deep-module-boundary.html">깊은 모듈 경계 점검표</a>와 전체 순서는 <a href="../reference/2026-validity-map.html">2026 유효성 지도</a>에 있다. 불분명한 부분은 언제든 에이전트에게 물어보라.</p>
+  <p>주요 출처: <a href="https://openai.com/index/harness-engineering/">OpenAI Harness Engineering</a>.</p>
+</main></body>
+</html>

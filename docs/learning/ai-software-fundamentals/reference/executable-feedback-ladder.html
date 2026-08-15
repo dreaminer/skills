@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>실행 가능한 피드백 사다리</title>
+  <link rel="stylesheet" href="../../assets/lesson.css">
+</head>
+<body><main>
+  <h1>실행 가능한 피드백 사다리</h1>
+  <p class="lede">리스크가 발생하는 곳과 같은 층위에서, 가장 싼 자동 검증을 고른다.</p>
+
+  <table>
+    <thead><tr><th>깨질 수 있는 것</th><th>우선 피드백</th><th>관찰할 결과</th></tr></thead>
+    <tbody>
+      <tr><td>정책·계산·경계값</td><td>단위 테스트</td><td>입력별 결정값</td></tr>
+      <tr><td>데이터·외부 서비스 연결</td><td>통합 테스트</td><td>실제 연결 뒤 결과</td></tr>
+      <tr><td>사용자 흐름·화면</td><td>브라우저/종단간 검증</td><td>사용자가 보는 행동</td></tr>
+      <tr><td>성능·운영 상태</td><td>로그·메트릭·추적 검증</td><td>시간, 오류, 관측값</td></tr>
+    </tbody>
+  </table>
+
+  <h2>선택 절차</h2>
+  <ol>
+    <li>“이 변경이 틀렸다면 사용자는 무엇을 보거나 잃는가?”를 한 문장으로 쓴다.</li>
+    <li>그 결과를 직접 반증하는 가장 좁은 자동 검증을 고른다.</li>
+    <li>에이전트가 구현 전 실패하게 만들고, 구현 뒤 같은 명령으로 통과를 보인다.</li>
+    <li>더 넓은 층위의 위험이 남을 때만 통합·브라우저·관측 검증을 추가한다.</li>
+  </ol>
+
+  <h2>앞선 연습에 적용</h2>
+  <pre><code>위험: 30일 초과 사용자가 알림을 받거나, 정확히 30일 사용자가 누락된다.
+우선 검증: 비활성 판정 단위 테스트
+경계 사례: 30일 정확히 → false, 30일 + 1초 → true
+연결 검증: true인 사용자가 발송 작업에서 제외되는 통합 테스트</code></pre>
+
+  <p><a href="../lessons/0003-feedback-that-can-prove-you-wrong.html">레슨 3: 틀렸음을 증명할 피드백</a></p>
+  <p>근거: <a href="https://openai.com/index/harness-engineering/">OpenAI Harness Engineering</a>, <a href="https://code.claude.com/docs/en/best-practices">Claude Code best practices</a>.</p>
+</main></body>
+</html>
