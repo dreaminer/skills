@@ -1,10 +1,13 @@
 # Seed System Artifacts
 
-Use this reference when creating or updating seed-system files.
+Schemas for seed-system's contract files. Mechanical facts — the canonical contract-hash
+computation, the structural gates, and the label list rejected in canonical documents — are owned
+by `scripts/check-acceptance.py`. When a sentence here seems to disagree with the script, the
+script is the reference and the sentence is the defect.
 
 ## Input contract
 
-Read these seed-body files when present. Do not edit them.
+Read these seed-body files from the target project's `docs/` when present. Do not edit them.
 
 ```text
 docs/ESSENTIAL_DOMAIN.md          # frozen inherited language
@@ -15,39 +18,32 @@ docs/SEED_BODY_QUESTIONS.md       # context and upstream gaps
 docs/SEED_BODY_CRITERIA.md        # seed-body gate evidence
 ```
 
-If `ESSENTIAL_USECASE.md` is absent but `ESSENTIAL_DOMAIN.md` and clear seed-body notes exist, proceed
-by asking the user which Essential outcomes must be covered. Do not invent missing Essential intent.
-This is the minimum partial-input exception. If `ESSENTIAL_DOMAIN.md` is absent, or no seed-body
-package exists at all, stop and route the user to seed-body instead of using conversation-only
-evidence.
+If `ESSENTIAL_DOMAIN.md` is absent, or no seed-body package exists at all, stop and route the user
+to seed-body. If `ESSENTIAL_USECASE.md` is absent but `ESSENTIAL_DOMAIN.md` and clear seed-body
+notes exist, ask the user which Essential outcomes must be covered; do not invent missing
+Essential intent.
 
-## Working paths
+## Working notes
 
-```text
-.scratch/seed-system/SEED_SYSTEM_FLOWS.md         # raw system-flow evidence
-.scratch/seed-system/SEED_SYSTEM_PRIOR.md         # category checklist, question material only
-.scratch/seed-system/SEED_SYSTEM_HARVEST.md       # vocabulary and constraint harvest report
-.scratch/seed-system/SEED_SYSTEM_CANDIDATES.md    # AC candidate queue
-.scratch/seed-system/SEED_SYSTEM_IMPL_PROPOSAL.md # implementation defaults, after AC ratification
-.scratch/seed-system/SEED_SYSTEM_TESTS.md         # test command and AC lifecycle records
-.scratch/seed-system/SEED_SYSTEM_LATER.md         # explicit v1-out items
-.scratch/seed-system/SEED_SYSTEM_QUESTIONS.md     # deferred questions and back-to-Essential gaps
-.scratch/seed-system/SEED_SYSTEM_CRITERIA.md      # closing-gate demand document
-.scratch/seed-system/SEED_SYSTEM_REJECTED.md      # explicit rejection log
+`.scratch/seed-system/` is free-form; nothing in it carries a schema. Two shapes that have worked
+— examples, not requirements.
+
+A raw flow fragment. `[Term]` is inherited Essential language; `{term}` marks an unratified system
+term. Canonical files carry neither queue labels nor `{term}` markers — the rejected-label list is
+the script's.
+
+```md
+## SYF-001
+
+Fragment:
+- [발주확인]을 채널에 올리다 중간에 끊기면 -> 재시도해도 한 번만 반영된다 ({멱등})
+
+Evidence:
+- T7 "끊기면 두 번 될 수 있잖아" - original utterance
 ```
 
-Materialize accepted output under the target project's `docs/`:
-
-```text
-docs/ACCEPTANCE.md
-docs/SEED_SYSTEM_IMPL_PROPOSAL.md
-docs/SEED_SYSTEM_TESTS.md
-docs/SEED_SYSTEM_LATER.md
-docs/SEED_SYSTEM_QUESTIONS.md
-docs/SEED_SYSTEM_CRITERIA.md
-```
-
-Do not create `SYSTEM_DOMAIN.md` or `SYSTEM_USECASE.md`.
+An Acceptance candidate staged for review: the scenario in its final `ACCEPTANCE.md` form, plus
+the queue label `[assumption]` and a `Blocked by:` line while confirmation is pending.
 
 ## Evidence
 
@@ -61,80 +57,8 @@ Evidence:
 - T12 (ratified) "맞아, 멱등키로 막자" - approved assumption
 ```
 
-Use LLM knowledge to ask better questions or propose implementation defaults. Do not use it as
-Evidence for canonical Acceptance.
-
-## Raw flows
-
-`SEED_SYSTEM_FLOWS.md` stores one raw system-flow fragment per item.
-
-```md
-## SYF-001
-
-Fragment:
-- [발주확인]을 채널에 올리다 중간에 끊기면 -> 재시도해도 한 번만 반영된다 ({멱등})
-
-Serves:
-- ESSENTIAL_USECASE #2 (발주확인)
-
-Evidence:
-- T7 "끊기면 두 번 될 수 있잖아" - original utterance
-
-Notes:
-- SF-004 seed absorbed; channel write path still needs seam selection.
-```
-
-Keep raw flows raw. Mark unratified system terms with `{term}`. Use inherited Essential terms as
-`[Term]`. Rewrite into Acceptance candidates later; do not edit the corpus to look canonical.
-
-## Candidate queue
-
-Queue only `acceptance`, `implementation-hint`, and `question` candidates. Use `AC-{nnn}` only for
-Acceptance scenarios that are staged for review; use `SC-{nnn}` for raw candidate records when an
-Acceptance ID is not yet assigned.
-
-```md
-## SC-001
-
-Type:
-acceptance
-
-Label:
-[assumption]
-
-Subject:
-중복 없이 발주확인 반영
-
-Content:
-## [중복 없이 발주확인 반영]
-
-ID:
-AC-001
-
-Basis:
-proposed
-
-Seam:
-- 발주확인 채널 접점
-
-Given:
-- 반영되지 않은 [발주확인]이 있다.
-
-When:
-- 전송 도중 연결이 끊겨 같은 요청이 다시 전달된다.
-
-Then:
-- [발주확인]은 한 번만 반영된다.
-
-Evidence:
-- T12 (비준) "다시 보내도 두 번 잡히면 안 돼"
-
-Blocked by:
-- Seam confirmation
-```
-
-Labels are queue-only: `[assumption]`.
-Canonical `ACCEPTANCE.md` must not contain labels or `{term}` markers.
+Use LLM knowledge to ask better questions or propose implementation defaults, not as Evidence for
+canonical Acceptance.
 
 ## ACCEPTANCE.md
 
@@ -179,18 +103,11 @@ Requirements:
   `ESSENTIAL_USECASE #n (subject)`. If the number and subject later disagree, the subject governs.
 - Split scenarios when one seam cannot faithfully observe all outcomes.
 
-Contract hash fields are ID, Subject, Seam, Given, When, and Then. Exclude Basis and Evidence because
-provenance changes must not stale the test.
+The contract hash covers behavioral fields only — ID, Subject, Seam, Given, When, Then. Basis and
+Evidence are provenance and stay outside it, so provenance edits never stale a test. The canonical
+computation lives in `scripts/check-acceptance.py`; do not restate it in prose.
 
-Canonical hash computation: build one line per token in field order — the literal field name, then
-that field's content lines (`ID`, the id, `Subject`, the subject, then `Seam`, `Given`, `When`,
-`Then` each followed by their lines). Strip each content line's leading `- `, trim it, collapse
-internal whitespace to single spaces, and drop empty lines. Join all lines with `\n`, normalize to
-Unicode NFC, encode UTF-8, and take the sha256 hex digest. `scripts/check-acceptance.py` implements
-this definition and is its executable reference.
-
-When any included field changes semantically, recompute the hash and invalidate each affected test
-record immediately:
+When any hashed field changes semantically, invalidate each affected test record immediately:
 
 ```md
 Status:
@@ -243,19 +160,24 @@ Notes:
 
 Allowed statuses:
 
-- `red`
-- `green`
-- `gap — <concrete reason>`
+- `red` — the linked test fails because the selected behavior is absent.
+- `green` — the linked test passes under the current marker.
+- `gap — <concrete reason>` — a faithful runnable test cannot exist yet, with the concrete reason.
+
+Common gap wordings: `gap — test harness not created yet` (design complete, `$seed-tdd` has not
+authored the runnable test) and `gap — contract changed; test relink required` (a semantic
+Acceptance edit invalidated a linked record).
+
+Implementation handoff needs RED evidence regardless of Basis; a gap is honest but not verified.
+Missing behavior uses an observed working-tree RED. Behavior already present before its AC slice
+may instead use `$seed-tdd`'s isolated sensitivity RED: the record becomes `green` with the Notes
+token `PREEXISTING_GREEN: <mutation and failing assertion evidence>`; until that proof exists it
+stays `gap — RED not observed; sensitivity unproven`.
 
 Every record states its worst v1-relevant failure outcome as `Risk` and the narrowest harness that
 can refute it as `Layer`: `unit` (policy, calculation, boundary values), `integration` (data or
 external connections), `browser` (user-visible flow), or `observability` (performance or
 operations). Seam says where to observe; Layer says what kind of test refutes the risk.
-
-Use `gap — test harness not created yet` when the design is complete but `$seed-tdd` has not
-authored the runnable test. Replace the gap with `red` or `green` once a faithful test exists.
-Use `gap — contract changed; test relink required` whenever an Acceptance semantic edit invalidates
-a previously linked `red` or `green` record.
 
 ## SEED_SYSTEM_IMPL_PROPOSAL.md
 
@@ -285,12 +207,3 @@ Deferred values:
 
 Implementation proposals may mention technology. Acceptance scenarios should not, unless the
 technology choice is itself user-visible product behavior.
-
-## Criteria, later, questions, rejected
-
-- `SEED_SYSTEM_CRITERIA.md` is a demand document: list what must be true for the Acceptance body to
-  be testable. Point to candidate or canonical AC IDs; do not paste answers as prose.
-- `SEED_SYSTEM_LATER.md` stores explicit v1-out system flows with the reason and affected AC area.
-- `SEED_SYSTEM_QUESTIONS.md` stores deferred decisions and `back-to-Essential` gaps. Do not resolve
-  Essential gaps inside seed-system.
-- `SEED_SYSTEM_REJECTED.md` stores explicit rejected candidates with reason and Evidence.
