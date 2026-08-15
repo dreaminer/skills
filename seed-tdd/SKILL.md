@@ -62,13 +62,9 @@ the current AC. Create the minimum accepted harness only when the selected slice
 it so the declared test command runs as written; route a declared command that cannot be made to run
 to `$seed-system` rather than amending it.
 
-Reserve `red` for a failure showing the selected behavior is absent: an assertion derived from
-`Then` fails, or the declared `Seam` itself is missing where the test reaches for it. Classify
-harness, build, fixture, configuration, infrastructure, test-discovery failures, and import failures
-outside that seam as concrete gaps. Never add behavior-free production code to turn a missing seam
-into an assertion failure. An immediate pass follows the reference's `UNEXPECTED_GREEN` branch; a
-successful sensitivity proof records the already-present behavior as GREEN and returns to Step 2,
-while an unproven test remains a concrete gap.
+Classify each observed run — `red`, a concrete gap, or an immediate pass — by the reference's RED
+classification. An immediate pass follows the reference's `UNEXPECTED_GREEN` branch and, when the
+sensitivity proof succeeds, returns to Step 2.
 
 RED is complete only when the narrow command exhibits a failure satisfying the reference's RED
 criteria, the lifecycle record contains `Status: red`, the test path and exact current marker, and

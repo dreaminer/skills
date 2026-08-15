@@ -37,11 +37,11 @@ A faithful RED has all three properties:
 3. the failure shows the selected behavior is absent — either an assertion derived from a `Then`
    clause fails, or that seam's own module, attribute, or implementation is missing.
 
-Record build, syntax, fixture, configuration, infrastructure, discovery failures, and import
-failures outside the selected seam as `gap — <concrete reason>`. These outcomes require harness
-repair or investigation while preserving the assertion. Do not add behavior-free production code to
-convert a missing seam into an assertion failure; the missing seam is the stronger evidence of the
-two, and the stub is production code written before RED.
+Record harness, build, syntax, fixture, configuration, infrastructure, discovery failures, and
+import failures outside the selected seam as `gap — <concrete reason>`. These outcomes require
+harness repair or investigation while preserving the assertion. Do not add behavior-free production
+code to convert a missing seam into an assertion failure; the missing seam is the stronger evidence
+of the two, and the stub is production code written before RED.
 
 ## UNEXPECTED_GREEN
 
