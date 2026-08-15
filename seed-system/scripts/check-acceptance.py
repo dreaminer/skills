@@ -12,8 +12,9 @@ Usage:
     python3 check-acceptance.py [--docs DIR] [--complete]
 
   --docs DIR    project docs directory (default: docs)
-  --complete    additionally require every AC record to be green
-                (completion audit; without it red/gap are legitimate states)
+  --complete    additionally require every AC record to be green and every
+                inherited use case to be covered (completion audit; without it
+                red/gap and not-yet-covered use cases are legitimate states)
 
 Exit codes: 0 = no failures, 1 = failures reported, 2 = cannot run.
 """
@@ -197,7 +198,7 @@ def check_tests(path, acs, complete):
     return test_dir
 
 
-def check_coverage(euc_path, acs):
+def check_coverage(euc_path, acs, complete):
     subjects = []
     for sec in parse_sections(euc_path.read_text(encoding="utf-8"), ()):
         s = subject_of(sec)
@@ -209,8 +210,14 @@ def check_coverage(euc_path, acs):
             for line in ac["fields"].get("Evidence", []):
                 if "ESSENTIAL_USECASE" in line and subject in line:
                     covered = True
-        if not covered:
+        if covered:
+            continue
+        # Mid-design an uncovered use case is a question, not a blocker: it may be
+        # deliberately deferred from v1. Only the completion audit demands coverage.
+        if complete:
             fail("coverage", f"inherited use case '[{subject}]' is named in no AC Evidence")
+        else:
+            warn("coverage", f"inherited use case '[{subject}]' is named in no AC Evidence — deferred from v1, or still missing?")
     known = set(subjects)
     for ac_id, ac in acs.items():
         for line in ac["fields"].get("Evidence", []):
@@ -245,7 +252,7 @@ def main():
 
     euc = docs / "ESSENTIAL_USECASE.md"
     if euc.exists():
-        check_coverage(euc, acs)
+        check_coverage(euc, acs, args.complete)
 
     for line in warnings:
         print(line)

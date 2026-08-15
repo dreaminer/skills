@@ -38,12 +38,13 @@ seed-system conversation on a real project, which remains the open completion co
 
 ## Observed — parked, not screening failures
 
-- **Coverage hard-FAIL on a deliberately deferred use case.** Executed evidence from 2026-08-15
-  review: an `ESSENTIAL_USECASE.md` entry intentionally deferred from v1 (`[Cancel Order]`) makes
-  `check-acceptance.py` FAIL even without `--complete`, blocking the `$seed-tdd` Step 1 gate.
-  Changing the script was outside the ratified diet scope (script behavior frozen). Parked as a
-  demotion candidate (FAIL → WARN without `--complete`) awaiting user ratification, with this
-  reproduction as its evidence.
+- **Coverage hard-FAIL on a deliberately deferred use case.** ~~Parked~~ — **resolved 2026-08-16,
+  user-ratified.** Executed evidence from the 2026-08-15 review: an `ESSENTIAL_USECASE.md` entry
+  intentionally deferred from v1 (`[Cancel Order]`) made `check-acceptance.py` FAIL even without
+  `--complete`, blocking the `$seed-tdd` Step 1 gate with no escape hatch short of deleting the
+  file or writing fake Evidence. Demoted to WARN at design time, FAIL under `--complete`, matching
+  how the script already treats `red`/`gap`. Locked by `seed-system/tests/run.sh`, mutation-checked
+  in both directions.
 - **Identity principle 7 vs the mixed-mode gate.** The principle (publish no System canonical) and
   the script-enforced mixed-mode rejection coexist in `SKILL.md`. Recorded as two facts —
   judgment principle vs mechanical gate — not an ownership-map duplication.
