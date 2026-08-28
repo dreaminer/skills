@@ -22,6 +22,8 @@ The installer reads `.claude-plugin/plugin.json` and installs the skill folders 
 
 ```text
 .claude-plugin/plugin.json
+seed-loop/SKILL.md
+seed-loop/DESIGN.md
 seed-body/SKILL.md
 seed-system/SKILL.md
 seed-tdd/SKILL.md

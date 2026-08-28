@@ -21,14 +21,28 @@ greenfield 구현을 위한 독립적인 Acceptance 몸체를 만든다.
 사용자가 같은 행동을 두 층에서 다시 비준하게 만들었다. 안내는 `SEED_SYSTEM_IMPL_PROPOSAL.md`로,
 판정은 Acceptance 계약+테스트로 분리한다.
 
+## 결정 (2026-08-29)
+
+**materialized seed 문서의 정의 포인터를 탐색 가능한 링크로 표현한다 (사용자 비준).**
+seed-system 출력에서는 `ACCEPTANCE.md`의 `Evidence:`와 `SEED_SYSTEM_IMPL_PROPOSAL.md`의
+`Why:`만 정의 링크를 작성한다. upstream의 CRITERIA 답 포인터와 parking `Trace:`까지
+포함한 네 source의 표기 스키마는 각 산출물 `references/artifacts.md`가, target 파일 탐색과
+GFM heading anchor 해결은 `scripts/check-acceptance.py`가 소유한다. 별도 `seed-common` 설치 단위는
+두지 않는다.
+
+절 재배치는 내용 기반 anchor를 바꾸지 않지만 rename은 링크가 자동으로 따라가지 않는다.
+체커는 이를 stale fragment로 탐지하며, 이미 작성된 로컬 링크의 파일이나 정의 절이 없으면
+기본 실행과 `--complete` 모두 구조 실패다. 링크 없는 기존 포인터는 호환성을 위해 경고로
+남겨, 새 산출물의 작성 지침과 기계적 타겟 무결성을 분리한다.
+
 ## 소유 지도
 
 한 사실은 한 곳만 산다. 중복이 발견되면 동기화하지 않고 소유자 아닌 쪽을 삭제한다.
 
 | 사실 | 소유자 |
 |---|---|
-| 계약 해시 계산, 구조 게이트, 캐노니컬 거절 라벨 목록 | `scripts/check-acceptance.py` |
-| 입력 계약, 계약 파일 스키마, 생명주기 어휘(`PREEXISTING_GREEN` 포함) | `references/artifacts.md` |
+| 계약 해시 계산, 구조 게이트, 정의 링크 target·GFM anchor 해결, 캐노니컬 거절 라벨 목록 | `scripts/check-acceptance.py` |
+| 입력 계약, 계약 파일 스키마, 정의 링크 source·표기, 생명주기 어휘(`PREEXISTING_GREEN` 포함) | `references/artifacts.md` |
 | 정체성 목록과 대화 지침 | `SKILL.md` |
 | 설계 결정, 근거, 편집 게이트 | `DESIGN.md` |
 

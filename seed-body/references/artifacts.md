@@ -30,6 +30,15 @@ docs/SEED_BODY_REJECTED.md       # 사용자가 명시 기각한 것만 (검토 
 기존 `docs/`에 같은 파일이 있으면 충돌 항목을 사용자에게 보여주고 결정받는다
 (덮어쓰기 / 병합 / 보류). 이전 seed-body 산출물이 명백하면 교체 가능, 아니면 묻는다.
 
+## 정의 링크
+
+승급 패키지에서 특정 정의를 답이나 근거의 포인터로 삼는 곳은
+`SEED_BODY_CRITERIA.md`의 캐노니컬 답 포인터와 `SEED_BODY_SYSTEM_PARKING.md`의
+`Trace:` 둘뿐이다. 두 곳은 대상 프로젝트 `docs/`에 materialize된 문서의 기존 `##` 절을
+`[표시문](상대경로.md#GFM-heading-anchor)`로 가리킨다. Essential 표시문은
+`ESSENTIAL_USECASE #n (subject)` 형태를 유지한다. 문서 순번과 `EF-nnn`은 표시문이나 scratch
+provenance로 남길 수 있지만 단독 포인터가 되지 않는다.
+
 ## 발화 근거 (Evidence)
 
 Evidence는 **턴 참조 + 짧은 인용**이다. 코드가 없으므로 이것이 유일한 provenance다.
@@ -111,7 +120,7 @@ Fragment:
 - 공지를 푸시로 전달한다
 
 Trace:
-- EF-001 (공지가 대상자에게 보인다)
+- [ESSENTIAL_USECASE #1 (공지 노출)](ESSENTIAL_USECASE.md#공지-노출) (scratch: EF-001)
 
 Evidence:
 - T4 "푸시로 보내면 돼" — 사용자가 말한 실행 수단

@@ -1,7 +1,6 @@
 ---
 name: seed-system
-description: seed-body가 남긴 동결 Essential 언어와 파킹된 System 발화를 입력으로, 코드 없는 출발점에서 사용자와 문답해 비준된 ACCEPTANCE.md, Acceptance 테스트 연결 계획, 구현 기본안(SEED_SYSTEM_IMPL_PROPOSAL)을 만드는 상류 설계 스킬. 코드는 쓰지 않으며 사용자가 /seed-system으로 직접 호출할 때만 실행한다.
-disable-model-invocation: true
+description: 비준된 Seed body에서 Acceptance 계약, test 연결 계획, 구현 기본안을 사람과 비준한다. 사용자가 seed-system 단계만 명시 요청했거나 active seed-loop가 System owner로 선택했을 때 사용한다.
 ---
 
 # Seed System
@@ -129,8 +128,10 @@ the user marks only changes.
 Then prepare `SEED_SYSTEM_TESTS.md` records and hand off to `$seed-tdd` with the AC IDs, contract
 hashes, seams, expected assertions, and per-scenario Risk/Layer. Record
 `gap — test harness not created yet` where no test exists; `$seed-tdd` proves RED/GREEN one slice
-at a time. At the end, present next-step categories only (`$seed-tdd`, PRD, tickets, prototype);
-do not start one unless the user asks.
+at a time. At the end of a standalone run, present next-step categories only (`$seed-tdd`, PRD,
+tickets, prototype); do not start one unless the user asks. Under an active seed-loop, return the
+ratified handoff and verification result to the loop; the initial loop request already authorizes
+the next owner transition but never substitutes for content ratification.
 
 ## Verification
 

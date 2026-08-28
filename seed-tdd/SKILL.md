@@ -1,7 +1,6 @@
 ---
 name: seed-tdd
-description: Implements a ratified seed-system package as hash-linked Acceptance tracer bullets, proving RED before minimal GREEN.
-disable-model-invocation: true
+description: Implements a ratified Seed system package as hash-linked Acceptance tracer bullets from RED to minimal GREEN. Use when the user explicitly requests seed-tdd or an active seed-loop selects the TDD owner.
 ---
 
 # Seed TDD
