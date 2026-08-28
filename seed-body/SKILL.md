@@ -1,7 +1,6 @@
 ---
 name: seed-body
-description: 코드가 없는 출발점에서 사용자와의 문답으로 v1 Essential 몸체(ESSENTIAL_DOMAIN/ESSENTIAL_USECASE)를 심는 상류 기획 스킬. 비전은 보존하고 Essential 바깥의 실행 수단 발화는 원문 파킹해 후속 단계로 넘긴다.
-disable-model-invocation: true
+description: 코드 없는 Seed의 v1 Essential 몸체와 Domain 언어를 사람과 비준한다. 사용자가 seed-body 단계만 명시 요청했거나 active seed-loop가 Essential owner로 선택했을 때 사용한다.
 ---
 
 # Seed Body — 대화로 Essential 몸체 심기
@@ -174,7 +173,9 @@ CRITERIA는 수요 문서다 — v1 몸체를 확정하기 전에 답이 있어�
 
 ## 필수 질문
 
-- [x] Q1. 핵심 행위자는 누구이고 어떤 가치를 얻는가? → ESSENTIAL_USECASE #1,#3
+- [x] Q1. 핵심 행위자는 누구이고 어떤 가치를 얻는가?
+  → [ESSENTIAL_USECASE #1 (포인트 적립)](ESSENTIAL_USECASE.md#포인트-적립),
+    [ESSENTIAL_USECASE #3 (포인트 사용)](ESSENTIAL_USECASE.md#포인트-사용)
 - [ ] Q2. {적립}과 {사용}은 v1에서 모두 다루는가? → 미답
 
 ## 비필수 유보
@@ -223,17 +224,20 @@ B 통과 후 순서:
 2. 모든 UseCase `[Term]`이 DOMAIN에 있고 `{term}`·작업 라벨이 새지 않았는지 검사한다.
 3. 기존 대상 파일과 충돌하면 artifacts.md의 충돌 규칙대로 사용자 결정을 받는다.
 4. 고정 인계 문서를 artifacts.md의 포맷대로 `docs/`에 두고, 명시 기각이 있으면 기각 기록도
-   옮긴다. 둔 직후 CRITERIA가 `→ QUESTIONS`·`→ LATER`로 강등한 항목이 그 최종 파일에
-   실재하는지 확인한다 — 가리키는 곳에 없으면 승급이 아니라 유실이다.
+   옮긴다. 둔 직후 artifacts.md의 정의 링크가 모두 해소되고, CRITERIA가 `→ QUESTIONS`·
+   `→ LATER`로 강등한 항목이 그 최종 파일에 실재하는지 확인한다 — 가리키는 곳에
+   없으면 승급이 아니라 유실이다.
 5. 후보 큐 잔여는 질문으로 남길 가치가 있으면 QUESTIONS로 옮기고 아니면 폐기한다. 미비준
    후보를 LATER로 보내지 않는다.
 6. 캐노니컬과 인계 문서를 다시 읽어 Evidence가 확정 근거를 모두 담는지 확인한 뒤 작업용
    코퍼스·프라이어·수확 리포트·후보 큐를 정리한다. 사용자가 run 백업을 원하면 정리 전에
    보존한다.
 
-파킹된 SF는 확정된 System 설계가 아니라 후속 스킬이 다시 확인할 raw 시드다. 종료 시 다음
-단계 카테고리(System 몸체 도출, 수요·시장 검증, PRD, 티켓, 프로토타입)만 제시하고 실행은
-사용자의 다음 요청에 맡긴다. 재실행은 새 run과 새 비준으로 시작하되, 기존
+파킹된 SF는 확정된 System 설계가 아니라 후속 스킬이 다시 확인할 raw 시드다. standalone 종료
+시에는 다음 단계 카테고리(System 몸체 도출, 수요·시장 검증, PRD, 티켓, 프로토타입)만 제시하고
+실행은 사용자의 다음 요청에 맡긴다. active seed-loop가 이 owner를 선택한 실행이면 materialized
+package와 비준 결과를 loop에 반환한다. 최초 loop 요청은 다음 owner로 전이할 실행 권한이지만
+내용 비준을 대신하지 않는다. 재실행은 새 run과 새 비준으로 시작하되, 기존
 `docs/SEED_BODY_REJECTED.md`가 있으면 기각 레지스트리로 읽어 같은 제안을 되풀이하지 않는다.
 
 ## 첫 턴

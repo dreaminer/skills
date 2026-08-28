@@ -23,6 +23,19 @@ to seed-body. If `ESSENTIAL_USECASE.md` is absent but `ESSENTIAL_DOMAIN.md` and 
 notes exist, ask the user which Essential outcomes must be covered; do not invent missing
 Essential intent.
 
+## Definition links
+
+In seed-system outputs, definition links appear only in `ACCEPTANCE.md` `Evidence:` and
+`SEED_SYSTEM_IMPL_PROPOSAL.md` `Why:`. When either field names a definition from another
+materialized seed document, point to its existing `##` section with
+`[label](relative-path.md#GFM-heading-anchor)`.
+Keep the referenced artifact identity in the label (`ESSENTIAL_USECASE #n (subject)`, `SF-nnn`,
+or `AC-nnn`) so a definition link remains distinguishable from an unrelated Markdown link.
+
+Keep parser-owned values (`ID`, `Basis`, `Acceptance`, `Risk`, `Layer`, `Status`, `Test`, `Marker`)
+and contract-hashed values (Subject, Seam, Given, When, Then) as plain text. The canonical target
+file set, GFM anchor resolution, and link-integrity checks live in `scripts/check-acceptance.py`.
+
 ## Working notes
 
 `.scratch/seed-system/` is free-form; nothing in it carries a schema. Two shapes that have worked
@@ -53,7 +66,8 @@ ratification are the provenance.
 ```md
 Evidence:
 - T7 "끊기면 두 번 될 수 있잖아" - original concern
-- SF-007 (seed) "밖 취소 감지 방식 미결" - seed-body parking
+- [SF-007 · 밖 취소 감지](SEED_BODY_SYSTEM_PARKING.md#sf-007) (seed)
+  "밖 취소 감지 방식 미결" - seed-body parking
 - T12 (ratified) "맞아, 멱등키로 막자" - approved assumption
 ```
 
@@ -99,8 +113,11 @@ Requirements:
 - `Seam` is the public boundary where every `Then` can be asserted.
 - Given/When/Then use Essential language and observable outcomes.
 - Evidence quotes user utterance or ratification.
-- When an AC covers an inherited use case from `ESSENTIAL_USECASE.md`, Evidence also names it as
-  `ESSENTIAL_USECASE #n (subject)`. If the number and subject later disagree, the subject governs.
+- When an AC covers an inherited use case from `ESSENTIAL_USECASE.md`, Evidence also links it in
+  the exact label form `[ESSENTIAL_USECASE #n (subject)]`, for example:
+  `[ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)`. The parenthesized
+  subject is required for coverage checking; if the number and subject later disagree, the subject
+  governs.
 - Split scenarios when one seam cannot faithfully observe all outcomes.
 
 The contract hash covers behavioral fields only — ID, Subject, Seam, Given, When, Then. Basis and
@@ -193,7 +210,8 @@ Default:
 - Event queue plus channel webhook ingestion; polling is fallback for channels without webhook support.
 
 Why:
-- AC-001 requires retry-safe single reflection of [발주확인].
+- [AC-001 · Return Created Order ID](ACCEPTANCE.md#return-created-order-id) requires retry-safe
+  single reflection of [발주확인].
 
 Alternatives:
 - Full polling. Simpler, but weaker latency and rate-limit behavior.

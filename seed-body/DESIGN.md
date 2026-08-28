@@ -13,6 +13,19 @@ seed-body는 Essential 층만 책임진다 (2026-07-06). 캐노니컬은 `ESSENT
 이 스킬의 가치는 문서 정리가 아니라 사용자와 도메인 언어를 공동으로 벼리는 데 있다.
 사람이 Essential의 유일한 진실원천이며, 비준 없는 텍스트는 캐노니컬이 되지 않는다.
 
+## 결정 (2026-08-29)
+
+**승급 패키지의 정의 포인터를 탐색 가능한 링크로 표현한다 (사용자 비준).**
+`SEED_BODY_CRITERIA.md`의 캐노니컬 답과 `SEED_BODY_SYSTEM_PARKING.md`의 `Trace:`는
+materialize된 문서의 정의 절을 직접 가리킨다. 이는 새 Essential 의무가 아니라 기존
+dangling-pointer 방어 규칙에 사용자가 바로 이동할 수 있는 표기를 부여한 것이다.
+
+링크는 내용 기반 heading anchor라 절 재배치에는 유지되지만 절 이름을 바꾸면 자동으로
+따라가지 않는다. 이 rename은 downstream `seed-system` checker가 stale fragment로 탐지한다.
+링크를 쓰는 필드와 표기는 `references/artifacts.md`, target 탐색과 GFM anchor 해결은
+`seed-system/scripts/check-acceptance.py`가 각각 단독 소유한다. 이 작은 규칙을 위한 별도
+`seed-common` 설치 단위는 두지 않는다.
+
 ## 결정 (2026-08-17)
 
 **Essential 정의를 정체성 원칙 2에 추가 (2026-08-16 비준).** 사용자 발화("서비스가 제공하고자
@@ -57,7 +70,7 @@ CRITERIA에 "System-derivability 4축 커버리지" 절이 있지만 이는 규�
 | 사실 | 소유자 |
 |---|---|
 | 정체성 원칙, 발산·수렴·승급의 대화 지침 | `SKILL.md` |
-| 인계 패키지 경로·파일 스키마·Evidence 규약 | `references/artifacts.md` |
+| 인계 패키지 경로·파일 스키마·Evidence·정의 링크 규약 | `references/artifacts.md` |
 | 설계 결정, 근거, 편집 게이트 | `DESIGN.md` |
 
 ## 편집 게이트 (2026-08-16)

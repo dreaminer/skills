@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """Mechanical verifier for seed-system output documents.
 
-Checks structure, hash-marker linkage, and coverage of ACCEPTANCE.md and
-SEED_SYSTEM_TESTS.md. Implements the canonical contract-hash computation
+Checks structure, hash-marker linkage, artifact-definition links, and coverage
+of ACCEPTANCE.md and SEED_SYSTEM_TESTS.md. Implements the canonical contract-hash computation
 defined in references/artifacts.md and is its executable reference.
 
 It does NOT judge semantics: whether an AC faithfully completes an Essential
 use case, or whether a test faithfully asserts a Then, stays a human/agent duty.
 
 Usage:
-    python3 check-acceptance.py [--docs DIR] [--complete]
+    python3 check-acceptance.py [--docs DIR] [--complete | --links-only]
 
   --docs DIR    project docs directory (default: docs)
   --complete    additionally require every AC record to be green and every
@@ -22,9 +22,11 @@ Exit codes: 0 = no failures, 1 = failures reported, 2 = cannot run.
 import argparse
 import hashlib
 import re
+import string
 import sys
 import unicodedata
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 
 AC_ID_RE = re.compile(r"^AC-\d{3,}$")
 MARKER_RE = re.compile(r"@acceptance:\s*(AC-\d{3,})\s+sha256:([0-9a-f]{64})")
@@ -33,6 +35,36 @@ HASH_FIELDS = ("Seam", "Given", "When", "Then")  # plus ID and Subject, see cont
 BASIS_VALUES = {"inherited", "proposed"}
 LAYER_VALUES = {"unit", "integration", "browser", "observability"}
 TEST_FIELD_NAMES = ("Acceptance", "Risk", "Layer", "Status", "Test", "Marker", "Notes")
+MATERIALIZED_SEED_FILES = frozenset(
+    {
+        "ESSENTIAL_DOMAIN.md",
+        "ESSENTIAL_USECASE.md",
+        "SEED_BODY_SYSTEM_PARKING.md",
+        "SEED_BODY_LATER.md",
+        "SEED_BODY_QUESTIONS.md",
+        "SEED_BODY_CRITERIA.md",
+        "SEED_BODY_REJECTED.md",
+        "ACCEPTANCE.md",
+        "SEED_SYSTEM_TESTS.md",
+        "SEED_SYSTEM_IMPL_PROPOSAL.md",
+        "SEED_SYSTEM_NOTES.md",
+    }
+)
+ARTIFACT_LINK_RE = re.compile(
+    r"(?<!!)\[([^\]\n]+)\]\(\s*(?:<([^>\n]+)>|([^\s)]+))\s*\)"
+)
+FIELD_HEADER_RE = re.compile(r"^([A-Za-z][A-Za-z ]*):(?:\s*(.*))?$")
+POINTER_RE = re.compile(
+    r"(?<![A-Za-z0-9_-])(?:"
+    r"ESSENTIAL_USECASE(?:\s*#\d+(?:\s*,\s*#?\d+)*(?:\s*\([^)]+\))?)?"
+    r"|(?:AC|SF)-\d{3,})(?![A-Za-z0-9_-])"
+)
+SCRATCH_EF_RE = re.compile(r"(?<![A-Za-z0-9_-])EF-\d{3,}(?![A-Za-z0-9_-])")
+REFERENCE_FIELDS = {
+    "SEED_BODY_SYSTEM_PARKING.md": frozenset({"Trace"}),
+    "ACCEPTANCE.md": frozenset({"Evidence"}),
+    "SEED_SYSTEM_IMPL_PROPOSAL.md": frozenset({"Why"}),
+}
 
 failures = []
 warnings = []
@@ -44,6 +76,222 @@ def fail(check, msg):
 
 def warn(check, msg):
     warnings.append(f"WARN [{check}] {msg}")
+
+
+def unfenced_lines(text):
+    """Yield (line number, line) outside Markdown fenced code blocks."""
+    fence_char = None
+    fence_len = 0
+    for line_no, line in enumerate(text.splitlines(), 1):
+        opening = re.match(r"^[ \t]{0,3}(`{3,}|~{3,})", line)
+        if fence_char is None:
+            if opening:
+                fence_char = opening.group(1)[0]
+                fence_len = len(opening.group(1))
+                continue
+            yield line_no, line
+            continue
+
+        closing = re.match(
+            rf"^[ \t]{{0,3}}{re.escape(fence_char)}{{{fence_len},}}[ \t]*$", line
+        )
+        if closing:
+            fence_char = None
+            fence_len = 0
+
+
+def gfm_heading_slug(heading):
+    """Return the GFM-style slug used by materialized Seed headings."""
+    value = unicodedata.normalize("NFC", heading.strip()).lower()
+    ascii_punctuation = set(string.punctuation) - {"-", "_"}
+    value = "".join(
+        ch
+        for ch in value
+        if ch not in ascii_punctuation
+        and (ch in "-_" or not unicodedata.category(ch).startswith("P"))
+    )
+    return re.sub(r"\s", "-", value)
+
+
+def heading_anchor_index(path):
+    """Index existing level-two headings, including GFM duplicate suffixes."""
+    anchors = set()
+    for _line_no, line in unfenced_lines(path.read_text(encoding="utf-8")):
+        match = re.match(r"^##[ \t]+(.+?)[ \t]*$", line)
+        if not match:
+            continue
+        heading = re.sub(r"[ \t]+#+[ \t]*$", "", match.group(1))
+        base = gfm_heading_slug(heading)
+        anchor = base
+        suffix = 0
+        while anchor in anchors:
+            suffix += 1
+            anchor = f"{base}-{suffix}"
+        anchors.add(anchor)
+    return anchors
+
+
+def reference_blocks(path):
+    """Return only the schema slots allowed to carry Seed artifact links."""
+    text = path.read_text(encoding="utf-8")
+    if path.name == "SEED_BODY_CRITERIA.md":
+        blocks = []
+        context = None
+        buffer = []
+        for line_no, line in unfenced_lines(text):
+            if "→" in line:
+                if buffer:
+                    blocks.append((context, "\n".join(buffer)))
+                context = f"line {line_no}"
+                buffer = [line]
+            elif buffer and line[:1].isspace() and line.strip():
+                buffer.append(line)
+            elif buffer:
+                blocks.append((context, "\n".join(buffer)))
+                context = None
+                buffer = []
+        if buffer:
+            blocks.append((context, "\n".join(buffer)))
+        return blocks
+
+    selected_fields = REFERENCE_FIELDS.get(path.name)
+    if not selected_fields:
+        return []
+
+    blocks = []
+    subject = "document"
+    field = None
+    buffer = []
+
+    def flush():
+        nonlocal buffer
+        if field in selected_fields and buffer:
+            blocks.append((f"{subject} {field}", "\n".join(buffer)))
+        buffer = []
+
+    for _line_no, line in unfenced_lines(text):
+        heading = re.match(r"^##[ \t]+(.+?)\s*$", line)
+        if heading:
+            flush()
+            subject = heading.group(1).strip()
+            field = None
+            continue
+
+        header = FIELD_HEADER_RE.match(line)
+        if header:
+            flush()
+            field = header.group(1) if header.group(1) in selected_fields else None
+            if field is not None and header.group(2):
+                buffer.append(header.group(2))
+            continue
+
+        if field is not None and line.strip():
+            buffer.append(line)
+
+    flush()
+    return blocks
+
+
+def check_artifact_links(docs):
+    """Check explicit Seed definition links without touching parsed/hash fields."""
+    docs_root = docs.resolve()
+    known_targets = {}
+    for filename in MATERIALIZED_SEED_FILES:
+        target = docs / filename
+        resolved = target.resolve()
+        known_targets[resolved] = target
+
+    sources = [docs / "SEED_BODY_CRITERIA.md"]
+    sources.extend(docs / filename for filename in REFERENCE_FIELDS)
+    for source in sources:
+        if not source.is_file():
+            continue
+        for context, block in reference_blocks(source):
+            definition_link_spans = []
+            for link in ARTIFACT_LINK_RE.finditer(block):
+                destination = link.group(2) or link.group(3)
+                try:
+                    parsed = urlsplit(destination)
+                    decoded_path = unquote(parsed.path, errors="strict")
+                except (UnicodeDecodeError, ValueError):
+                    if POINTER_RE.search(link.group(1)):
+                        definition_link_spans.append(link.span())
+                        fail(
+                            "artifact-link",
+                            f"{source.name} {context}: invalid encoded destination: '{destination}'",
+                        )
+                    continue
+
+                # External links and links to non-Seed documents are outside this contract.
+                if parsed.scheme or parsed.netloc:
+                    continue
+                target_name = Path(decoded_path).name if decoded_path else source.name
+                is_definition_link = (
+                    target_name in MATERIALIZED_SEED_FILES
+                    or POINTER_RE.search(link.group(1)) is not None
+                )
+                if not is_definition_link:
+                    continue
+
+                definition_link_spans.append(link.span())
+                if target_name not in MATERIALIZED_SEED_FILES:
+                    fail(
+                        "artifact-link",
+                        f"{source.name} {context}: materialized target not found: '{destination}'",
+                    )
+                    continue
+                target = (source.parent / decoded_path).resolve() if decoded_path else source.resolve()
+                try:
+                    target.relative_to(docs_root)
+                except ValueError:
+                    fail(
+                        "artifact-link",
+                        f"{source.name} {context}: target escapes docs: '{destination}'",
+                    )
+                    continue
+
+                declared_target = known_targets.get(target)
+                if declared_target is None or not declared_target.is_file():
+                    fail(
+                        "artifact-link",
+                        f"{source.name} {context}: materialized target not found: '{destination}'",
+                    )
+                    continue
+                if not parsed.fragment:
+                    fail(
+                        "artifact-link",
+                        f"{source.name} {context}: definition link has no ## fragment: '{destination}'",
+                    )
+                    continue
+                try:
+                    fragment = unicodedata.normalize(
+                        "NFC", unquote(parsed.fragment, errors="strict")
+                    )
+                except UnicodeDecodeError:
+                    fail(
+                        "artifact-link",
+                        f"{source.name} {context}: invalid encoded fragment: '{destination}'",
+                    )
+                    continue
+                if fragment not in heading_anchor_index(declared_target):
+                    fail(
+                        "artifact-link",
+                        f"{source.name} {context}: ## fragment '#{fragment}' not found in {declared_target.name}",
+                    )
+
+            for pointer in POINTER_RE.finditer(block):
+                if any(start <= pointer.start() and pointer.end() <= end for start, end in definition_link_spans):
+                    continue
+                warn(
+                    "link-format",
+                    f"{source.name} {context}: bare pointer '{pointer.group(0)}' should be an inline definition link",
+                )
+            if source.name == "SEED_BODY_SYSTEM_PARKING.md" and not definition_link_spans:
+                for pointer in SCRATCH_EF_RE.finditer(block):
+                    warn(
+                        "link-format",
+                        f"{source.name} {context}: scratch pointer '{pointer.group(0)}' cannot be the sole Trace",
+                    )
 
 
 def parse_sections(text, field_names):
@@ -230,8 +478,27 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--docs", default="docs")
     ap.add_argument("--complete", action="store_true")
+    ap.add_argument("--links-only", action="store_true")
     args = ap.parse_args()
     docs = Path(args.docs)
+
+    if args.complete and args.links_only:
+        ap.error("--complete and --links-only are mutually exclusive")
+    if not docs.is_dir():
+        print(f"cannot run: {docs} is not a directory", file=sys.stderr)
+        return 2
+
+    if args.links_only:
+        check_artifact_links(docs)
+        for line in warnings:
+            print(line)
+        for line in failures:
+            print(line)
+        print(
+            f"checked artifact links: {len(failures)} failure(s), "
+            f"{len(warnings)} warning(s)"
+        )
+        return 1 if failures else 0
 
     acceptance = docs / "ACCEPTANCE.md"
     if not acceptance.exists():
@@ -243,6 +510,7 @@ def main():
             fail("mixed-mode", f"{legacy} coexists with ACCEPTANCE.md — route it through human review")
 
     acs = check_acceptance(acceptance)
+    check_artifact_links(docs)
 
     tests = docs / "SEED_SYSTEM_TESTS.md"
     if tests.exists():
