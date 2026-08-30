@@ -51,8 +51,18 @@ printf '%s\n' \
   '- [ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)' \
   >> "$scratch/docs/ACCEPTANCE.md"
 printf '%s\n' '# SEED SYSTEM IMPLEMENTATION PROPOSAL' '' '## IP-001' '' \
+  'Area:' \
+  '- Test harness' \
+  'Default:' \
+  '- Exercise the order API through the acceptance suite.' \
   'Why:' \
   '- [AC-001 · Return Created Order ID](ACCEPTANCE.md#return-created-order-id) requires an observable result.' \
+  'Alternatives:' \
+  '- None.' \
+  'Status:' \
+  '- accepted' \
+  'Deferred values:' \
+  '- None.' \
   > "$scratch/docs/SEED_SYSTEM_IMPL_PROPOSAL.md"
 
 rc=0
@@ -71,7 +81,7 @@ if printf '%s' "$out" | grep -q "Create Order"; then
 fi
 
 rc=0
-out=$(cd "$scratch" && python3 "$checker" --docs docs --complete 2>&1) || rc=$?
+out=$(cd "$scratch" && python3 "$checker" --docs docs --complete acceptance 2>&1) || rc=$?
 if [ "$rc" -ne 1 ]; then
   printf '%s\n' "completion audit must fail on an uncovered use case (exit $rc)" "$out" >&2
   exit 1
@@ -207,7 +217,60 @@ if [ "$rc" -ne 0 ]; then
   exit 1
 fi
 
+realization="$scratch/realization"
+cp -R "$fixture" "$realization"
+
+rc=0
+out=$(cd "$realization" && python3 "$checker" --docs docs --complete realization 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "IP-001: no realization record"; then
+  printf '%s\n' "realization completion must name a missing non-deferred IP" "$out" >&2
+  exit 1
+fi
+
+printf '%s\n' '' '## IP-001' '' \
+  'Proposal:' \
+  '- [IP-001 · Test harness](SEED_SYSTEM_IMPL_PROPOSAL.md#ip-001)' \
+  'Status:' \
+  '- verified' \
+  'Marker:' \
+  '- @realization: IP-001 sha256:c78f804d34cb7110aee769d7e676097113ba2214ae93c3c8b5d2af762bdc3991' \
+  'Evidence:' \
+  '- integration: tests/acceptance/order-create.test.txt' \
+  '- command: sh tests/acceptance/run.sh (exit 0)' \
+  'Notes:' \
+  '- The accepted harness choice is observable in the fixture.' \
+  >> "$realization/docs/SEED_SYSTEM_TESTS.md"
+
+rc=0
+out=$(cd "$realization" && python3 "$checker" --docs docs --complete realization 2>&1) || rc=$?
+if [ "$rc" -ne 0 ]; then
+  printf '%s\n' "verified realization fixture must pass" "$out" >&2
+  exit 1
+fi
+rc=0
+out=$(cd "$realization" && python3 "$checker" --docs docs --complete 2>&1) || rc=$?
+if [ "$rc" -ne 0 ]; then
+  printf '%s\n' "aggregate completion fixture must pass" "$out" >&2
+  exit 1
+fi
+
+sed 's/Exercise the Order creation API/Exercise the public Order API/' \
+  "$realization/docs/SEED_SYSTEM_IMPL_PROPOSAL.md" > "$realization/docs/proposal.next"
+mv "$realization/docs/proposal.next" "$realization/docs/SEED_SYSTEM_IMPL_PROPOSAL.md"
+rc=0
+out=$(cd "$realization" && python3 "$checker" --docs docs --complete realization 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "realization marker stale"; then
+  printf '%s\n' "a changed Default must stale its realization marker" "$out" >&2
+  exit 1
+fi
+
+cp "$fixture/docs/SEED_SYSTEM_TESTS.md" "$realization/docs/SEED_SYSTEM_TESTS.md"
+sed 's/^- accepted$/- deferred/' "$fixture/docs/SEED_SYSTEM_IMPL_PROPOSAL.md" \
+  > "$realization/docs/SEED_SYSTEM_IMPL_PROPOSAL.md"
+(cd "$realization" && python3 "$checker" --docs docs --complete realization >/dev/null)
+
 printf '%s\n' \
+  "OK: realization completion closes every non-deferred IP and detects stale choices" \
   "OK: a deferred use case warns at design time and fails only the completion audit" \
   "OK: Basis, Layer, and mixed-mode gates each reject their corruption" \
   "OK: valid artifact links resolve, broken links fail, and bare pointers warn"

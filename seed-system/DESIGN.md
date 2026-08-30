@@ -108,6 +108,18 @@ flow tests를 입력으로 Essential 의미만 복원하며 Acceptance 계약이
 - raw System 흐름을 독립적인 캐노니컬 도메인 모델로 승급하지 않는다.
 - `seed-system` 안에 테스트 작성·구현 엔진을 중복 구현하지 않는다.
 
+## IP realization lifecycle (2026-08-30)
+
+`SEED_SYSTEM_IMPL_PROPOSAL.md` remains the immutable, human-ratified choice source. Mutable state for
+each non-deferred `IP-nnn` lives in `SEED_SYSTEM_TESTS.md`; no new canonical document or ID family is
+introduced. A missing record is implicit pending, and `$seed-realize` writes one only when evidence
+exists.
+
+The realization hash covers `IP-nnn + Default`. A changed choice is normalized into `Default`, so
+the old marker becomes stale. Proposal enumeration, hash, link, and completion mechanics belong to
+the checker. Acceptance and realization are independent completion axes; plain `--complete` is the
+strict aggregate for compatibility.
+
 ## 검증 상태
 
 - 해시·마커 연결: `seed-tdd/tests/run.sh` 회귀가 지킨다.

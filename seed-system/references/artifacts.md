@@ -25,7 +25,7 @@ Essential intent.
 
 ## Definition links
 
-In seed-system outputs, definition links appear only in `ACCEPTANCE.md` `Evidence:` and
+In seed-system outputs, definition links appear in `ACCEPTANCE.md` `Evidence:` and
 `SEED_SYSTEM_IMPL_PROPOSAL.md` `Why:`. When either field names a definition from another
 materialized seed document, point to its existing `##` section with
 `[label](relative-path.md#GFM-heading-anchor)`.
@@ -35,6 +35,10 @@ or `AC-nnn`) so a definition link remains distinguishable from an unrelated Mark
 Keep parser-owned values (`ID`, `Basis`, `Acceptance`, `Risk`, `Layer`, `Status`, `Test`, `Marker`)
 and contract-hashed values (Subject, Seam, Given, When, Then) as plain text. The canonical target
 file set, GFM anchor resolution, and link-integrity checks live in `scripts/check-acceptance.py`.
+
+Realization records add one deliberate exception: `Proposal:` is an inline definition link whose
+label contains its `IP-nnn`. Other parser-owned values remain plain text. The checker validates the
+target `## IP-nnn` heading without placing Markdown inside the realization hash.
 
 ## Working notes
 
@@ -196,6 +200,42 @@ can refute it as `Layer`: `unit` (policy, calculation, boundary values), `integr
 external connections), `browser` (user-visible flow), or `observability` (performance or
 operations). Seam says where to observe; Layer says what kind of test refutes the risk.
 
+### Realization lifecycle records
+
+The same `SEED_SYSTEM_TESTS.md` carries a realization record only after `$seed-realize` has
+evidence for a non-deferred implementation proposal. No record means implicit `pending`; do not
+backfill empty records merely to enumerate the proposal document.
+
+```md
+## IP-001
+
+Proposal:
+- [IP-001 · Synchronization](SEED_SYSTEM_IMPL_PROPOSAL.md#ip-001)
+
+Status:
+- verified
+
+Marker:
+- @realization: IP-001 sha256:<canonical-realization-hash>
+
+Evidence:
+- code: implementation/src/outbox.ts
+- integration: implementation/tests/outbox.integration.test.ts
+- command: npm test -- outbox.integration.test.ts (exit 0)
+
+Notes:
+- Retry and restart behavior were exercised against SQLite.
+```
+
+Allowed statuses are `pending` and `verified`. A pending record omits `Marker` and `Evidence`.
+A verified record contains at least one existing project-relative path with kind `artifact`,
+`code`, `config`, `integration`, `migration`, or `deployment`, plus one `command` line recording
+the observed exit result. Repository artifacts and dry runs prove only what they observe; they do
+not prove a live deployment.
+
+The checker owns path, marker, and completion mechanics. `$seed-realize` owns the judgment that
+the evidence proves the selected Default.
+
 ## SEED_SYSTEM_IMPL_PROPOSAL.md
 
 Create this only after the Acceptance body is ratified.
@@ -225,3 +265,15 @@ Deferred values:
 
 Implementation proposals may mention technology. Acceptance scenarios should not, unless the
 technology choice is itself user-visible product behavior.
+
+`Status` is `accepted`, `changed(T{n})`, `alternative accepted(T{n})`, or `deferred`. When a
+different choice is accepted, rewrite `Default` to the selected choice and keep the rejected choice
+under `Alternatives`.
+
+The realization hash covers only the proposal heading `IP-nnn` and normalized `Default` lines.
+Rationale and provenance edits do not stale evidence; a selected-Default edit does. The canonical
+computation lives in `scripts/check-acceptance.py`.
+
+Every non-deferred proposal forms the closed-world realization set. Deferred proposals need no
+lifecycle record. Missing records are legal during design and fail `--complete realization` by
+their exact `IP-nnn`.

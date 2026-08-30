@@ -6,6 +6,7 @@
     "./make-body",
     "./seed-system",
     "./seed-tdd",
+    "./seed-realize",
     "./blind-spot-pass",
     "./test-flows",
     "./explain-flows",
