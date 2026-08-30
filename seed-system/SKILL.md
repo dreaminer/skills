@@ -15,13 +15,14 @@ frozen Essential language + parked System utterances
   -> raw system-flow evidence and design constraints
   -> human-ratified Acceptance scenarios
   -> implementation proposal
-  -> test handoff records for RED/GREEN verification
+  -> AC test handoff plus a closed set of ratified implementation defaults
 ```
 
 `ACCEPTANCE.md` is the human contract; executable Acceptance tests are the mechanical constraint
 on implementation. This skill writes no production code and authors no tests. It prepares the
 contract, the agreed public seams, and the test-link records that a later `$seed-tdd` workflow
-consumes.
+consumes. Ratified implementation defaults are a separate realization contract consumed by
+`$seed-realize`; this skill does not claim those choices exist in code or operations.
 
 Read `DESIGN.md` before changing these rules. It owns the ownership map and the edit gates that
 decide what may become a rule in this skill.
@@ -60,6 +61,9 @@ Write three contract files under `docs/` — formats owned by `references/artifa
 - `ACCEPTANCE.md` — human-ratified v1 scenarios, hash-linked to tests.
 - `SEED_SYSTEM_TESTS.md` — test command, test directory, one lifecycle record per AC.
 - `SEED_SYSTEM_IMPL_PROPOSAL.md` — ratified implementation defaults.
+
+`seed-system` writes the AC lifecycle records. `$seed-realize` may later append IP realization
+records to `SEED_SYSTEM_TESTS.md`; it never edits the ratified proposal.
 
 Keep working notes in `.scratch/seed-system/` in whatever form serves the conversation; they carry
 no schema and never become canonical by sitting there. Deferred items, open questions, and
@@ -123,7 +127,9 @@ Apply partial edits to affected scenarios only, then re-present the batch.
 
 After ratification, propose implementation defaults by area — storage, external ports,
 synchronization, stack and test harness, deployment — one default each with the AC IDs it serves;
-the user marks only changes.
+the user marks only changes. Link every mentioned AC definition. If an alternative is accepted,
+rewrite `Default` to the selected choice. This closes the non-deferred `IP-nnn` set but does not
+claim it is realized.
 
 Then prepare `SEED_SYSTEM_TESTS.md` records and hand off to `$seed-tdd` with the AC IDs, contract
 hashes, seams, expected assertions, and per-scenario Risk/Layer. Record
@@ -139,7 +145,8 @@ Run `scripts/check-acceptance.py --docs <project-docs>` before presenting materi
 again after any edit to a materialized `ACCEPTANCE.md`. The script is the sole owner of the
 contract-hash computation and the structural gates (fields, hash-marker linkage, coverage naming,
 mixed-mode); semantics stay a human/agent duty. Completion — every v1 AC current-hash GREEN under
-`--complete` — is normally reached inside `$seed-tdd`, not here.
+`--complete acceptance` — is normally reached inside `$seed-tdd`, not here. Realization completion
+uses `--complete realization` and belongs to `$seed-realize`.
 
 ## First turn
 

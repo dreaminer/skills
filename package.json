@@ -16,6 +16,7 @@
     "make-body",
     "seed-system",
     "seed-tdd",
+    "seed-realize",
     "blind-spot-pass",
     "test-flows",
     "explain-flows",
@@ -30,7 +31,7 @@
     "!**/__pycache__"
   ],
   "scripts": {
-    "validate": "node scripts/validate-plugin.mjs && sh seed-system/tests/run.sh && sh seed-tdd/tests/run.sh",
+    "validate": "node scripts/validate-plugin.mjs && sh seed-system/tests/run.sh && sh seed-tdd/tests/run.sh && sh seed-realize/tests/run.sh",
     "pack:dry-run": "bun pm pack --dry-run"
   },
   "engines": {

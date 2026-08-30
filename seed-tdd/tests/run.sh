@@ -13,7 +13,7 @@ if [ "$actual" != "$expected" ]; then
   exit 1
 fi
 
-(cd "$fixture" && python3 "$checker" --docs docs --complete >/dev/null)
+(cd "$fixture" && python3 "$checker" --docs docs --complete acceptance >/dev/null)
 
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT HUP INT TERM
@@ -22,13 +22,13 @@ cp -R "$fixture/." "$scratch/"
 sed -e 's/- proposed/- inherited/' -e 's/T4 (ratified)/T9 (ratified)/' \
   "$scratch/docs/ACCEPTANCE.md" > "$scratch/docs/ACCEPTANCE.md.next"
 mv "$scratch/docs/ACCEPTANCE.md.next" "$scratch/docs/ACCEPTANCE.md"
-(cd "$scratch" && python3 "$checker" --docs docs --complete >/dev/null)
+(cd "$scratch" && python3 "$checker" --docs docs --complete acceptance >/dev/null)
 
 sed 's/A valid order request/A priority order request/' \
   "$scratch/docs/ACCEPTANCE.md" > "$scratch/docs/ACCEPTANCE.md.next"
 mv "$scratch/docs/ACCEPTANCE.md.next" "$scratch/docs/ACCEPTANCE.md"
 
-if (cd "$scratch" && python3 "$checker" --docs docs --complete >checker.out 2>&1); then
+if (cd "$scratch" && python3 "$checker" --docs docs --complete acceptance >checker.out 2>&1); then
   printf '%s\n' "stale marker unexpectedly passed completion validation" >&2
   exit 1
 fi

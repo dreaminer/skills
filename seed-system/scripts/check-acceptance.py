@@ -1,20 +1,22 @@
 #!/usr/bin/env python3
 """Mechanical verifier for seed-system output documents.
 
-Checks structure, hash-marker linkage, artifact-definition links, and coverage
-of ACCEPTANCE.md and SEED_SYSTEM_TESTS.md. Implements the canonical contract-hash computation
-defined in references/artifacts.md and is its executable reference.
+Checks Acceptance and implementation-proposal structure, lifecycle linkage,
+artifact-definition links, and Essential coverage. Implements the canonical
+Acceptance and realization hash computations defined in references/artifacts.md
+and is their executable reference.
 
 It does NOT judge semantics: whether an AC faithfully completes an Essential
-use case, or whether a test faithfully asserts a Then, stays a human/agent duty.
+use case, whether a test faithfully asserts a Then, or whether realization
+evidence proves the selected Default stays a human/agent duty.
 
 Usage:
-    python3 check-acceptance.py [--docs DIR] [--complete | --links-only]
+    python3 check-acceptance.py [--docs DIR] [--complete [SCOPE] | --links-only]
 
   --docs DIR    project docs directory (default: docs)
-  --complete    additionally require every AC record to be green and every
-                inherited use case to be covered (completion audit; without it
-                red/gap and not-yet-covered use cases are legitimate states)
+  --complete acceptance   require current-hash GREEN ACs and Essential coverage
+  --complete realization  require every non-deferred IP to be verified
+  --complete all          require both axes (plain --complete means all)
 
 Exit codes: 0 = no failures, 1 = failures reported, 2 = cannot run.
 """
@@ -30,11 +32,36 @@ from urllib.parse import unquote, urlsplit
 
 AC_ID_RE = re.compile(r"^AC-\d{3,}$")
 MARKER_RE = re.compile(r"@acceptance:\s*(AC-\d{3,})\s+sha256:([0-9a-f]{64})")
+IP_ID_RE = re.compile(r"^IP-\d{3,}$")
+IP_LINK_RE = re.compile(
+    r"\[([^\]\n]*\b(IP-\d{3,})\b[^\]\n]*)\]\(\s*"
+    r"(?:<([^>\n]+)>|([^\s)]+))\s*\)"
+)
+REALIZATION_MARKER_RE = re.compile(
+    r"@realization:\s*(IP-\d{3,})\s+sha256:([0-9a-f]{64})"
+)
 FIELD_NAMES = ("ID", "Basis", "Seam", "Given", "When", "Then", "Evidence")
 HASH_FIELDS = ("Seam", "Given", "When", "Then")  # plus ID and Subject, see contract_hash
 BASIS_VALUES = {"inherited", "proposed"}
 LAYER_VALUES = {"unit", "integration", "browser", "observability"}
 TEST_FIELD_NAMES = ("Acceptance", "Risk", "Layer", "Status", "Test", "Marker", "Notes")
+PROPOSAL_FIELD_NAMES = (
+    "Area",
+    "Default",
+    "Why",
+    "Alternatives",
+    "Status",
+    "Deferred values",
+)
+REALIZATION_FIELD_NAMES = ("Proposal", "Status", "Marker", "Evidence", "Notes")
+REALIZATION_PATH_KINDS = {
+    "artifact",
+    "code",
+    "config",
+    "integration",
+    "migration",
+    "deployment",
+}
 MATERIALIZED_SEED_FILES = frozenset(
     {
         "ESSENTIAL_DOMAIN.md",
@@ -57,12 +84,13 @@ FIELD_HEADER_RE = re.compile(r"^([A-Za-z][A-Za-z ]*):(?:\s*(.*))?$")
 POINTER_RE = re.compile(
     r"(?<![A-Za-z0-9_-])(?:"
     r"ESSENTIAL_USECASE(?:\s*#\d+(?:\s*,\s*#?\d+)*(?:\s*\([^)]+\))?)?"
-    r"|(?:AC|SF)-\d{3,})(?![A-Za-z0-9_-])"
+    r"|(?:AC|SF|IP)-\d{3,})(?![A-Za-z0-9_-])"
 )
 SCRATCH_EF_RE = re.compile(r"(?<![A-Za-z0-9_-])EF-\d{3,}(?![A-Za-z0-9_-])")
 REFERENCE_FIELDS = {
     "SEED_BODY_SYSTEM_PARKING.md": frozenset({"Trace"}),
     "ACCEPTANCE.md": frozenset({"Evidence"}),
+    "SEED_SYSTEM_TESTS.md": frozenset({"Proposal"}),
     "SEED_SYSTEM_IMPL_PROPOSAL.md": frozenset({"Why"}),
 }
 
@@ -309,7 +337,7 @@ def parse_sections(text, field_names):
             continue
         if current is None:
             continue
-        fm = re.match(r"^([A-Za-z]+):\s*$", line)
+        fm = re.match(r"^([A-Za-z][A-Za-z ]*):\s*$", line)
         if fm and fm.group(1) in field_names:
             field = fm.group(1)
             current["_fields"].setdefault(field, [])
@@ -333,6 +361,164 @@ def contract_hash(subject, fields):
         parts += [norm_line(x) for x in fields.get(name, []) if norm_line(x)]
     payload = unicodedata.normalize("NFC", "\n".join(parts)).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
+
+
+def proposal_hash(ip_id, fields):
+    """Hash only the selected implementation choice, not its rationale."""
+    parts = ["ID", ip_id, "Default"]
+    parts += [norm_line(x) for x in fields.get("Default", []) if norm_line(x)]
+    payload = unicodedata.normalize("NFC", "\n".join(parts)).encode("utf-8")
+    return hashlib.sha256(payload).hexdigest()
+
+
+def proposal_status(fields):
+    return norm_line((fields.get("Status") or [""])[0])
+
+
+def is_deferred_proposal(fields):
+    return proposal_status(fields).lower().startswith("deferred")
+
+
+def check_proposals(path):
+    """Return the closed-world set of ratified implementation proposals."""
+    proposals = {}
+    for sec in parse_sections(path.read_text(encoding="utf-8"), PROPOSAL_FIELD_NAMES):
+        ip_id = sec["_subject_raw"]
+        fields = sec["_fields"]
+        if not IP_ID_RE.match(ip_id):
+            fail("proposal", f"header '## {ip_id}' is not IP-nnn form")
+            continue
+        if ip_id in proposals:
+            fail("proposal", f"{ip_id}: duplicate proposal")
+            continue
+        for name in PROPOSAL_FIELD_NAMES:
+            if not fields.get(name):
+                fail("proposal", f"{ip_id}: missing or empty field '{name}'")
+        status = proposal_status(fields).lower()
+        if not (
+            status.startswith("accepted")
+            or status.startswith("changed")
+            or status.startswith("alternative accepted")
+            or status.startswith("deferred")
+        ):
+            fail("proposal", f"{ip_id}: unsupported Status '{proposal_status(fields)}'")
+        proposals[ip_id] = {
+            "fields": fields,
+            "hash": proposal_hash(ip_id, fields),
+            "deferred": is_deferred_proposal(fields),
+        }
+    if not proposals:
+        fail("proposal", f"{path.name} contains no parseable IP proposals")
+    return proposals
+
+
+def proposal_id_from_link(value):
+    match = IP_LINK_RE.search(value)
+    if not match:
+        return None
+    ip_id = match.group(2)
+    destination = match.group(3) or match.group(4)
+    try:
+        parsed = urlsplit(destination)
+        target_name = Path(unquote(parsed.path, errors="strict")).name
+        fragment = unicodedata.normalize("NFC", unquote(parsed.fragment, errors="strict"))
+    except (UnicodeDecodeError, ValueError):
+        return None
+    if target_name != "SEED_SYSTEM_IMPL_PROPOSAL.md" or fragment != gfm_heading_slug(ip_id):
+        return None
+    return ip_id
+
+
+def check_realizations(path, proposals, complete):
+    """Validate optional IP lifecycle records stored beside AC lifecycle records."""
+    seen = {}
+    text = path.read_text(encoding="utf-8")
+    for sec in parse_sections(text, REALIZATION_FIELD_NAMES):
+        fields = sec["_fields"]
+        if not fields.get("Proposal"):
+            if IP_ID_RE.match(sec["_subject_raw"]):
+                fail("realization", f"{sec['_subject_raw']}: missing Proposal definition link")
+            continue
+        rec = sec["_subject_raw"]
+        proposal_value = " ".join(norm_line(x) for x in fields["Proposal"])
+        ip_id = proposal_id_from_link(proposal_value)
+        if not ip_id:
+            fail(
+                "realization",
+                f"{rec}: Proposal must link an IP-nnn definition in SEED_SYSTEM_IMPL_PROPOSAL.md",
+            )
+            continue
+        if rec != ip_id:
+            fail("realization", f"{rec}: realization heading must be '## {ip_id}'")
+        if ip_id not in proposals:
+            fail("realization", f"{rec}: references unknown {ip_id}")
+            continue
+        if proposals[ip_id]["deferred"]:
+            fail("realization", f"{rec}: {ip_id} is deferred and must not have a lifecycle record")
+            continue
+        if ip_id in seen:
+            fail("realization", f"{rec}: duplicate realization record for {ip_id}")
+            continue
+        seen[ip_id] = True
+
+        status = norm_line((fields.get("Status") or [""])[0])
+        if status not in {"pending", "verified"}:
+            fail("realization", f"{rec} ({ip_id}): Status must be pending or verified")
+            continue
+        if status == "pending":
+            if fields.get("Marker") or fields.get("Evidence"):
+                fail("realization", f"{rec} ({ip_id}): pending record must omit Marker and Evidence")
+            if complete:
+                fail("complete-realization", f"{ip_id}: status pending — completion requires verified")
+            continue
+
+        marker = " ".join(norm_line(x) for x in fields.get("Marker") or [])
+        marker_match = REALIZATION_MARKER_RE.search(marker)
+        if not marker_match:
+            fail("realization", f"{rec} ({ip_id}): verified record lacks valid @realization marker")
+        else:
+            if marker_match.group(1) != ip_id:
+                fail("realization", f"{rec}: marker names {marker_match.group(1)} but record is for {ip_id}")
+            if marker_match.group(2) != proposals[ip_id]["hash"]:
+                fail("realization", f"{ip_id}: realization marker stale (Default changed; reverify required)")
+
+        evidence = [norm_line(x) for x in fields.get("Evidence") or []]
+        paths = []
+        commands = []
+        for item in evidence:
+            match = re.match(r"^([a-z]+):\s*(.+)$", item)
+            if not match:
+                fail("realization", f"{rec} ({ip_id}): malformed Evidence '{item}'")
+                continue
+            kind, value = match.groups()
+            if kind in REALIZATION_PATH_KINDS:
+                paths.append((kind, value))
+            elif kind == "command":
+                commands.append(value)
+            else:
+                fail("realization", f"{rec} ({ip_id}): unsupported Evidence kind '{kind}'")
+        if not paths:
+            fail("realization", f"{rec} ({ip_id}): verified record needs artifact-path Evidence")
+        if not commands:
+            fail("realization", f"{rec} ({ip_id}): verified record needs command Evidence")
+        for command in commands:
+            if not re.search(r"\(exit\s+0\)\s*$", command):
+                fail(
+                    "realization",
+                    f"{rec} ({ip_id}): command Evidence must record an observed '(exit 0)'",
+                )
+        for kind, value in paths:
+            evidence_path = Path(value)
+            if evidence_path.is_absolute() or ".." in evidence_path.parts:
+                fail("realization", f"{ip_id}: {kind} Evidence must be a project-relative path: '{value}'")
+            elif not evidence_path.exists():
+                fail("realization", f"{ip_id}: {kind} Evidence path does not exist: '{value}'")
+
+    if complete:
+        for ip_id, proposal in proposals.items():
+            if not proposal["deferred"] and ip_id not in seen:
+                fail("complete-realization", f"{ip_id}: no realization record — completion requires verified")
+    return seen
 
 
 def subject_of(section):
@@ -393,6 +579,8 @@ def check_tests(path, acs, complete):
     for sec in parse_sections(text, TEST_FIELD_NAMES):
         f = sec["_fields"]
         rec = sec["_subject_raw"]
+        if IP_ID_RE.match(rec):
+            continue
         ac_id = norm_line((f.get("Acceptance") or [""])[0])
         if not ac_id:
             fail("tests", f"{rec}: missing Acceptance reference")
@@ -477,7 +665,13 @@ def check_coverage(euc_path, acs, complete):
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--docs", default="docs")
-    ap.add_argument("--complete", action="store_true")
+    ap.add_argument(
+        "--complete",
+        nargs="?",
+        const="all",
+        choices=("acceptance", "realization", "all"),
+        help="require acceptance, realization, or aggregate completion",
+    )
     ap.add_argument("--links-only", action="store_true")
     args = ap.parse_args()
     docs = Path(args.docs)
@@ -509,24 +703,40 @@ def main():
         if (docs / legacy).exists():
             fail("mixed-mode", f"{legacy} coexists with ACCEPTANCE.md — route it through human review")
 
+    acceptance_complete = args.complete in {"acceptance", "all"}
+    realization_complete = args.complete in {"realization", "all"}
+
     acs = check_acceptance(acceptance)
     check_artifact_links(docs)
 
     tests = docs / "SEED_SYSTEM_TESTS.md"
     if tests.exists():
-        check_tests(tests, acs, args.complete)
+        check_tests(tests, acs, acceptance_complete)
     else:
         fail("tests", "SEED_SYSTEM_TESTS.md not found — every AC needs a lifecycle record")
 
     euc = docs / "ESSENTIAL_USECASE.md"
     if euc.exists():
-        check_coverage(euc, acs, args.complete)
+        check_coverage(euc, acs, acceptance_complete)
+
+    proposals = {}
+    proposal_path = docs / "SEED_SYSTEM_IMPL_PROPOSAL.md"
+    if proposal_path.exists():
+        proposals = check_proposals(proposal_path)
+        if tests.exists():
+            check_realizations(tests, proposals, realization_complete)
+    else:
+        fail("proposal", "SEED_SYSTEM_IMPL_PROPOSAL.md not found — implementation choices are not closed")
 
     for line in warnings:
         print(line)
     for line in failures:
         print(line)
-    print(f"checked {len(acs)} AC(s): {len(failures)} failure(s), {len(warnings)} warning(s)")
+    non_deferred = sum(not proposal["deferred"] for proposal in proposals.values())
+    print(
+        f"checked {len(acs)} AC(s), {non_deferred} non-deferred IP(s): "
+        f"{len(failures)} failure(s), {len(warnings)} warning(s)"
+    )
     return 1 if failures else 0
 
 
