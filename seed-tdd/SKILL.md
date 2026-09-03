@@ -42,8 +42,12 @@ Choose exactly one record in this order:
 4. another gap enabled by current GREEN slices;
 5. document order.
 
+Within the same status priority, prefer an AC with `Closes`; replay a contract-changed closing AC
+before selecting a new ordinary gap.
+
 Use `scripts/contract-markers.py` only to obtain current markers. Selection is complete when the
-AC, Seam, Risk, Layer, test command, and project-relative test destination are known.
+AC, Seam, Risk, Layer, any `Closes` obligations, test command, and project-relative test
+destination are known.
 
 ## 3. RED
 
@@ -76,8 +80,9 @@ is recorded. A conflict with another AC or a ratified choice routes to `$seed-sy
 ## 5. Continue or complete
 
 Return to selection until blocked or all AC records are current-hash GREEN. Then audit each `Then`
-against its assertion and declared Seam, run the declared full suite and required repository checks,
-and run:
+against its assertion at the declared Seam and each closing AC against the supported-entry rules
+in `references/test-quality.md`, run the declared full suite and required repository checks, and
+run:
 
 ```sh
 python3 <seed-system-skill>/scripts/check-acceptance.py --docs <project-docs> --complete acceptance

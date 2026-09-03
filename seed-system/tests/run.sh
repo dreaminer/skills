@@ -95,6 +95,167 @@ if printf '%s' "$out" | grep -q "marker hash is stale"; then
   exit 1
 fi
 
+# Delivery closure is explicit, hash-linked, and independent of Layer labels.
+closure="$scratch/closure"
+cp -R "$fixture/." "$closure/"
+(cd "$closure" && python3 "$checker" --docs docs --complete acceptance >/dev/null)
+
+sed '/^Closes:$/,/^Evidence:$/ { /^Evidence:$/!d; }' \
+  "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs --complete acceptance 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "FAIL \[closure\].*named in no AC Closes"; then
+  printf '%s\n' "completion must reject an Essential use case without a closing AC" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+
+sed '/^Evidence:/,$ { /^- \[ESSENTIAL_USECASE #1 (Create Order)\](ESSENTIAL_USECASE.md#create-order)$/d; }' \
+  "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "FAIL \[closure\].*Evidence does not link"; then
+  printf '%s\n' "Closes must target an Essential use case already linked by Evidence" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+
+printf '%s\n' '# ESSENTIAL USECASE' > "$closure/docs/ESSENTIAL_USECASE.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs --complete acceptance 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "completion requires an Essential inventory"; then
+  printf '%s\n' "completion must reject an empty Essential inventory" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ESSENTIAL_USECASE.md" "$closure/docs/ESSENTIAL_USECASE.md"
+
+sed 's/^- integration$/- unit/' "$fixture/docs/SEED_SYSTEM_TESTS.md" \
+  > "$closure/docs/SEED_SYSTEM_TESTS.md"
+(cd "$closure" && python3 "$checker" --docs docs --complete acceptance >/dev/null)
+cp "$fixture/docs/SEED_SYSTEM_TESTS.md" "$closure/docs/SEED_SYSTEM_TESTS.md"
+
+printf '%s\n' '' '## [Cancel Order]' '' 'Outcome:' '- cancelled [Order] is observable.' \
+  >> "$closure/docs/ESSENTIAL_USECASE.md"
+awk '
+  /^Evidence:$/ {
+    print "- [ESSENTIAL_USECASE #2 (Cancel Order)](ESSENTIAL_USECASE.md#cancel-order)"
+    print ""
+  }
+  { print }
+' "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+printf '%s\n' '- [ESSENTIAL_USECASE #2 (Cancel Order)](ESSENTIAL_USECASE.md#cancel-order)' \
+  >> "$closure/docs/ACCEPTANCE.md"
+sed 's/^- green$/- gap — multi-outcome closure under design/' \
+  "$fixture/docs/SEED_SYSTEM_TESTS.md" > "$closure/docs/SEED_SYSTEM_TESTS.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs 2>&1) || rc=$?
+if [ "$rc" -ne 0 ] || printf '%s' "$out" | grep -q "\[closure\]"; then
+  printf '%s\n' "one closing AC must be allowed to close multiple Essential use cases" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+cp "$fixture/docs/ESSENTIAL_USECASE.md" "$closure/docs/ESSENTIAL_USECASE.md"
+cp "$fixture/docs/SEED_SYSTEM_TESTS.md" "$closure/docs/SEED_SYSTEM_TESTS.md"
+
+printf '%s\n' '' '## [Return Created Order Reference]' '' \
+  'ID:' 'AC-002' '' \
+  'Basis:' '- inherited' '' \
+  'Seam:' '- Published Order package API' '' \
+  'Given:' '- valid order request.' '' \
+  'When:' '- consumer creates an [Order].' '' \
+  'Then:' '- result includes an [Order] reference.' '' \
+  'Closes:' '- [ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)' '' \
+  'Evidence:' '- [ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)' \
+  >> "$closure/docs/ACCEPTANCE.md"
+printf '%s\n' '' '## MT-002' '' \
+  'Acceptance:' '- AC-002' '' \
+  'Risk:' '- the creation response may identify the wrong [Order], sending follow-up work to another order.' '' \
+  'Layer:' '- unit' '' \
+  'Status:' '- gap — test harness not created yet' \
+  >> "$closure/docs/SEED_SYSTEM_TESTS.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs 2>&1) || rc=$?
+if [ "$rc" -ne 0 ] || printf '%s' "$out" | grep -q "\[closure\]"; then
+  printf '%s\n' "multiple closing ACs must be allowed for one Essential use case" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+cp "$fixture/docs/SEED_SYSTEM_TESTS.md" "$closure/docs/SEED_SYSTEM_TESTS.md"
+
+printf '%s\n' '' '## [Cancel Order]' '' 'Outcome:' '- cancelled [Order] is observable.' \
+  >> "$closure/docs/ESSENTIAL_USECASE.md"
+sed 's/(Create Order)\](ESSENTIAL_USECASE.md#create-order)/(Cancel Order)](ESSENTIAL_USECASE.md#cancel-order)/' \
+  "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs --complete acceptance 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "marker hash is stale"; then
+  printf '%s\n' "retargeting Closes must stale its Acceptance marker" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+cp "$fixture/docs/ESSENTIAL_USECASE.md" "$closure/docs/ESSENTIAL_USECASE.md"
+
+# Closes hashes the Essential Subject obligation, not cosmetic link spelling.
+sed '/^Closes:$/,/^Evidence:$/ {
+  s/#1 (Create Order)](ESSENTIAL_USECASE.md#create-order)/#99 (Create Order)](.\/ESSENTIAL_USECASE.md#create%2Dorder)/
+}' "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+(cd "$closure" && python3 "$checker" --docs docs --complete acceptance >/dev/null)
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+
+# Parentheses are valid in a canonical Essential Subject and must remain closable.
+sed 's/## \[Create Order\]/## [준비 (프로세스·담당)]/' \
+  "$fixture/docs/ESSENTIAL_USECASE.md" > "$closure/docs/ESSENTIAL_USECASE.md"
+sed -e 's/(Create Order)/(준비 (프로세스·담당))/g' \
+    -e 's/#create-order/#준비-프로세스담당/g' \
+  "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+sed 's/^- green$/- gap — parenthesized Subject parser regression/' \
+  "$fixture/docs/SEED_SYSTEM_TESTS.md" > "$closure/docs/SEED_SYSTEM_TESTS.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs 2>&1) || rc=$?
+if [ "$rc" -ne 0 ] || printf '%s' "$out" | grep -q "\[closure\]"; then
+  printf '%s\n' "a parenthesized Essential Subject must be a valid Evidence and Closes target" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+cp "$fixture/docs/ESSENTIAL_USECASE.md" "$closure/docs/ESSENTIAL_USECASE.md"
+cp "$fixture/docs/SEED_SYSTEM_TESTS.md" "$closure/docs/SEED_SYSTEM_TESTS.md"
+
+sed '/^Closes:$/,/^Evidence:$/ { s/(Create Order)/(Unknown Order)/; }' \
+  "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "FAIL \[closure\].*names unknown use case '(Unknown Order)'"; then
+  printf '%s\n' "Closes must reject an unknown Essential Subject" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+
+awk '
+  /^Closes:$/ { in_closes = 1 }
+  /^Evidence:$/ { in_closes = 0 }
+  in_closes && /^- \[ESSENTIAL_USECASE/ {
+    print "- ESSENTIAL_USECASE #1 (Create Order)"
+    next
+  }
+  { print }
+' "$fixture/docs/ACCEPTANCE.md" > "$closure/docs/ACCEPTANCE.md"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "Closes entry must be one exact ESSENTIAL_USECASE definition link"; then
+  printf '%s\n' "Closes must reject a malformed Essential definition link" "$out" >&2
+  exit 1
+fi
+cp "$fixture/docs/ACCEPTANCE.md" "$closure/docs/ACCEPTANCE.md"
+
+mv "$closure/docs/ESSENTIAL_USECASE.md" "$closure/docs/ESSENTIAL_USECASE.saved"
+rc=0
+out=$(cd "$closure" && python3 "$checker" --docs docs --complete acceptance 2>&1) || rc=$?
+if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "ESSENTIAL_USECASE.md not found — completion requires"; then
+  printf '%s\n' "completion must reject a missing Essential inventory" "$out" >&2
+  exit 1
+fi
+mv "$closure/docs/ESSENTIAL_USECASE.saved" "$closure/docs/ESSENTIAL_USECASE.md"
+
 # Structural gates, each asserted against a single deliberate corruption.
 assert_fails() {
   label=$1
@@ -149,15 +310,15 @@ sed 's/ESSENTIAL_USECASE.md#create-order/..\/ESSENTIAL_USECASE.md#create-order/'
 assert_fails "artifact link escaping docs" "target escapes docs"
 cp "$scratch/ACCEPTANCE.orig" "$scratch/docs/ACCEPTANCE.md"
 
-sed 's/\[ESSENTIAL_USECASE #1 (Create Order)\](ESSENTIAL_USECASE.md#create-order)/ESSENTIAL_USECASE #1 (Create Order)/' \
-  "$scratch/ACCEPTANCE.orig" > "$scratch/docs/ACCEPTANCE.md"
+cp "$scratch/ACCEPTANCE.orig" "$scratch/docs/ACCEPTANCE.md"
+printf '%s\n' '- SF-001' >> "$scratch/docs/ACCEPTANCE.md"
 rc=0
 out=$(cd "$scratch" && python3 "$checker" --docs docs 2>&1) || rc=$?
 if [ "$rc" -ne 0 ]; then
   printf '%s\n' "bare pointer warning should not fail (exit $rc)" "$out" >&2
   exit 1
 fi
-if ! printf '%s' "$out" | grep -q "WARN \[link-format\].*ESSENTIAL_USECASE #1 (Create Order)"; then
+if ! printf '%s' "$out" | grep -q "WARN \[link-format\].*SF-001"; then
   printf '%s\n' "bare pointer did not surface link-format warning" "$out" >&2
   exit 1
 fi
@@ -272,5 +433,6 @@ sed 's/^- accepted$/- deferred/' "$fixture/docs/SEED_SYSTEM_IMPL_PROPOSAL.md" \
 printf '%s\n' \
   "OK: realization completion closes every non-deferred IP and detects stale choices" \
   "OK: a deferred use case warns at design time and fails only the completion audit" \
+  "OK: delivery closure is semantic-hashed, parenthesis-safe, many-to-many, and Layer-independent" \
   "OK: Basis, Layer, and mixed-mode gates each reject their corruption" \
   "OK: valid artifact links resolve, broken links fail, and bare pointers warn"

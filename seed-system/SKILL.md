@@ -104,6 +104,12 @@ closing check can send you back to divergence.
 Closing check — judge these before staging the batch:
 
 - Coverage: does each inherited Essential outcome have at least one AC naming it in Evidence?
+- Delivery closure: does each inherited Essential use case have at least one AC whose `Closes`
+  link enters through a supported consumer entry, traverses the maintained composition for its
+  in-scope collaborators, and observes the ratified outcome through a supported output? One AC
+  may close several outcomes; a component API qualifies only when it is the target's supported
+  delivery interface. Require separate closers for independently promised consumer entries, not
+  merely because the implementation happens to expose several adapters.
 - Testability: can every `Then` be observed at its declared seam?
 - Atomicity: does each scenario test one behavior at one seam?
 - Failure paths: are relevant failure, retry, reverse, duplicate, and conflict flows included?
@@ -117,7 +123,8 @@ Ratify in two stages. Stage A, the criteria:
 ```
 
 Stage B, the full staged body in one batch, grouped by `Basis` — for `inherited`, confirm the
-mapping to ratified Essential content and the seam; for `proposed`, ratify the content:
+mapping to ratified Essential content, the seam, and any `Closes` obligation; for `proposed`,
+ratify the content:
 
 ```text
 이 Acceptance 몸체로 v1 계약을 확정할까? 바꿀 항목만 짚어줘.
@@ -132,7 +139,11 @@ rewrite `Default` to the selected choice. This closes the non-deferred `IP-nnn` 
 claim it is realized.
 
 Then prepare `SEED_SYSTEM_TESTS.md` records and hand off to `$seed-tdd` with the AC IDs, contract
-hashes, seams, expected assertions, and per-scenario Risk/Layer. Record
+hashes, seams, expected assertions, and per-scenario Risk/Layer. Use Risk to challenge the
+test-planning judgment: if it merely paraphrases the AC Subject/`Then`, replace it with an adverse
+v1 consequence; if the selected harness cannot refute it, change the Seam/Layer or split the
+scenario.
+Record
 `gap — test harness not created yet` where no test exists; `$seed-tdd` proves RED/GREEN one slice
 at a time. At the end of a standalone run, present next-step categories only (`$seed-tdd`, PRD,
 tickets, prototype); do not start one unless the user asks. Under an active seed-loop, return the
@@ -143,8 +154,9 @@ the next owner transition but never substitutes for content ratification.
 
 Run `scripts/check-acceptance.py --docs <project-docs>` before presenting materialized output, and
 again after any edit to a materialized `ACCEPTANCE.md`. The script is the sole owner of the
-contract-hash computation and the structural gates (fields, hash-marker linkage, coverage naming,
-mixed-mode); semantics stay a human/agent duty. Completion — every v1 AC current-hash GREEN under
+contract-hash computation and the structural gates (fields, hash-marker linkage, coverage and
+closure naming, non-empty Essential inventory, mixed-mode); semantics stay a human/agent duty.
+Completion — every v1 AC current-hash GREEN under
 `--complete acceptance` — is normally reached inside `$seed-tdd`, not here. Realization completion
 uses `--complete realization` and belongs to `$seed-realize`.
 
