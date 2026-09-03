@@ -62,8 +62,9 @@ GFM heading anchor 해결은 `scripts/check-acceptance.py`가 소유한다. 별�
 
 ## Acceptance 계약 결정
 
-- 계약 해시는 행동 필드(ID·Subject·Seam·Given/When/Then)만 덮는다. Basis와 Evidence는
-  provenance라 해시 밖이다 — provenance 수정이 테스트를 무효화하면 안 된다.
+- 계약 해시는 테스트 의무(ID·Subject·Seam·Given/When/Then과, 있을 때 `Closes`가 지목한
+  Essential Subject 집합)만 덮는다. Basis와 Evidence는 provenance라 해시 밖이다 —
+  provenance나 동일 Subject를 가리키는 링크 표기 수정이 테스트를 무효화하면 안 된다.
 - 계약의 의미 변경은 연결 테스트의 relink를 강제한다. 기계 검증은 스크립트가, 의미 판단은
   사람과 에이전트가 맡는다.
 - Basis 이원화(`inherited`/`proposed`, 애매하면 `proposed`)와 재기술 AC 금지 가드(정체성 목록
@@ -133,3 +134,26 @@ strict aggregate for compatibility.
   반복했는지도 함께 본다. 배경: ff8164a가 `SEED_SYSTEM_CRITERIA.md` 생성 절차와 재비준 트리거
   문장을 지우면서 그것을 가리키던 Stage A 프롬프트만 남겼다. 트리거 한 문장만 되살리는 수정은
   이 관찰 전에는 하지 않는다.
+
+## Essential delivery closure (2026-09-03)
+
+`Evidence` coverage and current-hash GREEN at each declared Seam do not imply that an inherited
+Essential use case is reachable through a supported consumer entry. Record that independent
+proof obligation on selected Acceptance scenarios with optional `Closes` definition links.
+
+`Closes` belongs to `ACCEPTANCE.md`: it says which Essential use case the scenario discharges,
+not where the scenario came from. It is therefore a test obligation rather than provenance. The
+normalized Essential Subject set participates in the Acceptance hash when present. Adding,
+removing, or changing a Subject forces `$seed-tdd` replay; renumbering or re-encoding a link to the
+same Subject does not. ACs without `Closes` retain their prior hashes.
+
+`--complete acceptance` requires a non-empty Essential use-case inventory and at least one
+current-hash GREEN closing AC per inherited use case. The checker validates only inventory,
+links, coverage, lifecycle, and hash currency. Whether a closing test enters through a supported
+consumer entry, traverses the maintained composition, and observes a supported output remains
+`seed-system`/`seed-tdd` semantic judgment.
+
+This adds no document, ID family, completion axis, framework rule, browser requirement, or Layer
+restriction. A component API qualifies when it is itself the Seed target's delivered consumer
+interface. Separately, use lifecycle `Risk` to challenge Seam/Layer test planning rather than
+merely restating the AC Subject or `Then`.

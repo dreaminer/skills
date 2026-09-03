@@ -12,7 +12,8 @@ Acceptance:
 - AC-001
 
 Risk:
-- A created [Order] cannot be identified.
+- The creation response can point the consumer at the wrong [Order], causing follow-up work to
+  target another order.
 
 Layer:
 - integration
@@ -24,7 +25,7 @@ Test:
 - tests/acceptance/order-create.test.txt
 
 Marker:
-- @acceptance: AC-001 sha256:9840a2ed8f1336ed74e4986b47f09fbd570ddf44c68f8ead5d77e5b63797d2bd
+- @acceptance: AC-001 sha256:29ad8f62a4dbb81a46918997ff29d7c64555818ed709262ee3249662f7b6caf5
 
 Notes:
 - Structural fixture for current-hash GREEN validation.

@@ -2,19 +2,20 @@
 """Mechanical verifier for seed-system output documents.
 
 Checks Acceptance and implementation-proposal structure, lifecycle linkage,
-artifact-definition links, and Essential coverage. Implements the canonical
+artifact-definition links, Essential coverage, and delivery closure. Implements the canonical
 Acceptance and realization hash computations defined in references/artifacts.md
 and is their executable reference.
 
 It does NOT judge semantics: whether an AC faithfully completes an Essential
-use case, whether a test faithfully asserts a Then, or whether realization
-evidence proves the selected Default stays a human/agent duty.
+use case, whether a Closes test traverses a supported delivery path, whether a
+test faithfully asserts a Then, or whether realization evidence proves the
+selected Default stays a human/agent duty.
 
 Usage:
     python3 check-acceptance.py [--docs DIR] [--complete [SCOPE] | --links-only]
 
   --docs DIR    project docs directory (default: docs)
-  --complete acceptance   require current-hash GREEN ACs and Essential coverage
+  --complete acceptance   require current-hash GREEN ACs, Essential coverage, and closure
   --complete realization  require every non-deferred IP to be verified
   --complete all          require both axes (plain --complete means all)
 
@@ -40,8 +41,9 @@ IP_LINK_RE = re.compile(
 REALIZATION_MARKER_RE = re.compile(
     r"@realization:\s*(IP-\d{3,})\s+sha256:([0-9a-f]{64})"
 )
-FIELD_NAMES = ("ID", "Basis", "Seam", "Given", "When", "Then", "Evidence")
-HASH_FIELDS = ("Seam", "Given", "When", "Then")  # plus ID and Subject, see contract_hash
+FIELD_NAMES = ("ID", "Basis", "Seam", "Given", "When", "Then", "Closes", "Evidence")
+REQUIRED_FIELD_NAMES = ("ID", "Basis", "Seam", "Given", "When", "Then", "Evidence")
+HASH_FIELDS = ("Seam", "Given", "When", "Then")  # plus ID, Subject, and semantic Closes subjects
 BASIS_VALUES = {"inherited", "proposed"}
 LAYER_VALUES = {"unit", "integration", "browser", "observability"}
 TEST_FIELD_NAMES = ("Acceptance", "Risk", "Layer", "Status", "Test", "Marker", "Notes")
@@ -80,6 +82,9 @@ MATERIALIZED_SEED_FILES = frozenset(
 ARTIFACT_LINK_RE = re.compile(
     r"(?<!!)\[([^\]\n]+)\]\(\s*(?:<([^>\n]+)>|([^\s)]+))\s*\)"
 )
+ESSENTIAL_USECASE_LABEL_RE = re.compile(
+    r"^ESSENTIAL_USECASE\s*#\d+\s*\((.+)\)$"
+)
 FIELD_HEADER_RE = re.compile(r"^([A-Za-z][A-Za-z ]*):(?:\s*(.*))?$")
 POINTER_RE = re.compile(
     r"(?<![A-Za-z0-9_-])(?:"
@@ -89,7 +94,7 @@ POINTER_RE = re.compile(
 SCRATCH_EF_RE = re.compile(r"(?<![A-Za-z0-9_-])EF-\d{3,}(?![A-Za-z0-9_-])")
 REFERENCE_FIELDS = {
     "SEED_BODY_SYSTEM_PARKING.md": frozenset({"Trace"}),
-    "ACCEPTANCE.md": frozenset({"Evidence"}),
+    "ACCEPTANCE.md": frozenset({"Closes", "Evidence"}),
     "SEED_SYSTEM_TESTS.md": frozenset({"Proposal"}),
     "SEED_SYSTEM_IMPL_PROPOSAL.md": frozenset({"Why"}),
 }
@@ -353,12 +358,42 @@ def norm_line(line):
     return re.sub(r"\s+", " ", line)
 
 
+def essential_usecase_subjects_in_links(line):
+    """Yield subjects from valid Essential definition-link labels in one line."""
+    for link in ARTIFACT_LINK_RE.finditer(line):
+        label = ESSENTIAL_USECASE_LABEL_RE.fullmatch(link.group(1).strip())
+        if label:
+            yield label.group(1).strip()
+
+
+def exact_essential_usecase_link_subject(line):
+    """Return the subject when the whole line is one Essential definition link."""
+    link = ARTIFACT_LINK_RE.fullmatch(norm_line(line))
+    if not link:
+        return None
+    label = ESSENTIAL_USECASE_LABEL_RE.fullmatch(link.group(1).strip())
+    return label.group(1).strip() if label else None
+
+
 def contract_hash(subject, fields):
     parts = ["ID"] + [norm_line(x) for x in fields.get("ID", [])]
     parts += ["Subject", norm_line(subject)]
     for name in HASH_FIELDS:
+        values = [norm_line(x) for x in fields.get(name, []) if norm_line(x)]
+        if not values:
+            continue
         parts.append(name)
-        parts += [norm_line(x) for x in fields.get(name, []) if norm_line(x)]
+        parts += values
+    closes_subjects = sorted(
+        {
+            unicodedata.normalize("NFC", norm_line(subject))
+            for line in fields.get("Closes", [])
+            if (subject := exact_essential_usecase_link_subject(line))
+        }
+    )
+    if closes_subjects:
+        parts.append("Closes")
+        parts += closes_subjects
     payload = unicodedata.normalize("NFC", "\n".join(parts)).encode("utf-8")
     return hashlib.sha256(payload).hexdigest()
 
@@ -547,7 +582,7 @@ def check_acceptance(path):
             fail("structure", f"{label}: ID missing or not AC-nnn form")
         elif ac_id in acs:
             fail("structure", f"{ac_id}: duplicate ID")
-        for name in FIELD_NAMES:
+        for name in REQUIRED_FIELD_NAMES:
             if not f.get(name):
                 fail("structure", f"{label}: missing or empty field '{name}'")
         basis = norm_line((f.get("Basis") or [""])[0])
@@ -640,26 +675,62 @@ def check_coverage(euc_path, acs, complete):
         s = subject_of(sec)
         if s:
             subjects.append(s)
-    for subject in subjects:
-        covered = False
-        for ac in acs.values():
-            for line in ac["fields"].get("Evidence", []):
-                if "ESSENTIAL_USECASE" in line and subject in line:
-                    covered = True
-        if covered:
-            continue
-        # Mid-design an uncovered use case is a question, not a blocker: it may be
-        # deliberately deferred from v1. Only the completion audit demands coverage.
+    if not subjects:
+        message = f"{euc_path.name} contains no parseable '## [Subject]' use cases"
         if complete:
-            fail("coverage", f"inherited use case '[{subject}]' is named in no AC Evidence")
+            fail("coverage", f"{message} — completion requires an Essential inventory")
         else:
-            warn("coverage", f"inherited use case '[{subject}]' is named in no AC Evidence — deferred from v1, or still missing?")
+            warn("coverage", f"{message} — delivery closure cannot be designed")
+        return
+
     known = set(subjects)
+    closed_by = {subject: [] for subject in subjects}
+    evidence_by_ac = {}
     for ac_id, ac in acs.items():
+        evidence_subjects = set()
         for line in ac["fields"].get("Evidence", []):
-            m = re.search(r"ESSENTIAL_USECASE\s*#\d+\s*\(([^)]+)\)", line)
-            if m and m.group(1).strip() not in known:
-                warn("coverage", f"{ac_id}: names unknown use case '({m.group(1).strip()})' — subject governs")
+            evidence_subjects.update(essential_usecase_subjects_in_links(line))
+        evidence_by_ac[ac_id] = evidence_subjects
+        for line in ac["fields"].get("Closes", []):
+            subject = exact_essential_usecase_link_subject(line)
+            if subject is None:
+                fail(
+                    "closure",
+                    f"{ac_id}: Closes entry must be one exact ESSENTIAL_USECASE definition link",
+                )
+                continue
+            if subject not in known:
+                fail("closure", f"{ac_id}: Closes names unknown use case '({subject})'")
+                continue
+            if subject not in evidence_subjects:
+                fail(
+                    "closure",
+                    f"{ac_id}: Closes '({subject})' but Evidence does not link that use case",
+                )
+                continue
+            closed_by[subject].append(ac_id)
+
+    for subject in subjects:
+        covered = any(subject in evidence for evidence in evidence_by_ac.values())
+        if not covered:
+            # Mid-design an uncovered use case is a question, not a blocker: it may be
+            # deliberately deferred from v1. Only the completion audit demands coverage.
+            if complete:
+                fail("coverage", f"inherited use case '[{subject}]' is named in no AC Evidence")
+            else:
+                warn("coverage", f"inherited use case '[{subject}]' is named in no AC Evidence — deferred from v1, or still missing?")
+
+        if not closed_by[subject]:
+            message = f"inherited use case '[{subject}]' is named in no AC Closes"
+            if complete:
+                fail("closure", f"{message} — completion requires supported-entry proof")
+            else:
+                warn("closure", f"{message} — delivery closure still missing?")
+
+    for ac_id, evidence_subjects in evidence_by_ac.items():
+        for subject in evidence_subjects:
+            if subject not in known:
+                warn("coverage", f"{ac_id}: names unknown use case '({subject})' — subject governs")
 
 
 def main():
@@ -718,6 +789,16 @@ def main():
     euc = docs / "ESSENTIAL_USECASE.md"
     if euc.exists():
         check_coverage(euc, acs, acceptance_complete)
+    elif acceptance_complete:
+        fail(
+            "coverage",
+            "ESSENTIAL_USECASE.md not found — completion requires an Essential inventory and delivery closure",
+        )
+    else:
+        warn(
+            "coverage",
+            "ESSENTIAL_USECASE.md not found — route through seed-body before designing delivery closure",
+        )
 
     proposals = {}
     proposal_path = docs / "SEED_SYSTEM_IMPL_PROPOSAL.md"

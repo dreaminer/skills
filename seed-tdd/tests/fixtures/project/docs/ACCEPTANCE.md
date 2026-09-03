@@ -20,5 +20,9 @@ When:
 Then:
 - The response includes the created [Order] ID.
 
+Closes:
+- [ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)
+
 Evidence:
 - T4 (ratified) "return the created order ID from the order creation API"
+- [ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)

@@ -18,23 +18,27 @@ docs/SEED_BODY_QUESTIONS.md       # context and upstream gaps
 docs/SEED_BODY_CRITERIA.md        # seed-body gate evidence
 ```
 
-If `ESSENTIAL_DOMAIN.md` is absent, or no seed-body package exists at all, stop and route the user
-to seed-body. If `ESSENTIAL_USECASE.md` is absent but `ESSENTIAL_DOMAIN.md` and clear seed-body
-notes exist, ask the user which Essential outcomes must be covered; do not invent missing
-Essential intent.
+Delivery closure requires the canonical Essential use-case inventory. Treat a missing seed-body
+package, missing `ESSENTIAL_DOMAIN.md` or `ESSENTIAL_USECASE.md`, or a use-case file with no
+parseable current `## [Subject]` entries as missing input. Route it through seed-body human review
+and continue only with the canonical inventory ratified there.
 
 ## Definition links
 
-In seed-system outputs, definition links appear in `ACCEPTANCE.md` `Evidence:` and
-`SEED_SYSTEM_IMPL_PROPOSAL.md` `Why:`. When either field names a definition from another
-materialized seed document, point to its existing `##` section with
-`[label](relative-path.md#GFM-heading-anchor)`.
-Keep the referenced artifact identity in the label (`ESSENTIAL_USECASE #n (subject)`, `SF-nnn`,
-or `AC-nnn`) so a definition link remains distinguishable from an unrelated Markdown link.
+In seed-system outputs, definition links appear in `ACCEPTANCE.md` `Evidence:` and `Closes:`, and
+in `SEED_SYSTEM_IMPL_PROPOSAL.md` `Why:`. When any such field names a definition in another
+materialized Seed document, point to its existing `##` section with
+`[label](relative-path.md#GFM-heading-anchor)`. Keep the referenced artifact identity in the label
+(`ESSENTIAL_USECASE #n (subject)`, `SF-nnn`, or `AC-nnn`) so a definition link remains
+distinguishable from an unrelated Markdown link.
 
 Keep parser-owned values (`ID`, `Basis`, `Acceptance`, `Risk`, `Layer`, `Status`, `Test`, `Marker`)
-and contract-hashed values (Subject, Seam, Given, When, Then) as plain text. The canonical target
-file set, GFM anchor resolution, and link-integrity checks live in `scripts/check-acceptance.py`.
+and contract-hashed values (Subject, Seam, Given, When, Then) as plain text. `Closes` is the
+deliberate Acceptance exception: it contains exact Essential definition links, while the normalized
+Essential subjects named by valid links participate in the contract hash. Link numbering, path
+spelling, and anchor encoding remain link-integrity concerns rather than test obligations. The
+canonical target file set, GFM anchor resolution, and link-integrity checks live in
+`scripts/check-acceptance.py`.
 
 Realization records add one deliberate exception: `Proposal:` is an inline definition link whose
 label contains its `IP-nnn`. Other parser-owned values remain plain text. The checker validates the
@@ -105,8 +109,12 @@ When:
 Then:
 - The response includes the created [Order] ID.
 
+Closes:
+- [ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)
+
 Evidence:
 - T4 (ratified) "return the created order ID from the order creation API"
+- [ESSENTIAL_USECASE #1 (Create Order)](ESSENTIAL_USECASE.md#create-order)
 ```
 
 Requirements:
@@ -116,6 +124,14 @@ Requirements:
   any clause adds system-designed behavior; when unsure, use `proposed`.
 - `Seam` is the public boundary where every `Then` can be asserted.
 - Given/When/Then use Essential language and observable outcomes.
+- `Closes` is optional. Put it only on a scenario ratified as the supported-entry reachability
+  proof for one or more inherited Essential use cases. Each value is an exact
+  `ESSENTIAL_USECASE` definition link in the same label form required by Evidence. The test must
+  enter as an intended consumer through a supported entry, traverse the maintained composition
+  for in-scope collaborators, and observe the outcome through a supported output. A component
+  API qualifies when it is itself the target's supported delivery interface. Independently
+  promised consumer entries need their own closing scenarios; incidental implementation adapters
+  do not.
 - Evidence quotes user utterance or ratification.
 - When an AC covers an inherited use case from `ESSENTIAL_USECASE.md`, Evidence also links it in
   the exact label form `[ESSENTIAL_USECASE #n (subject)]`, for example:
@@ -124,9 +140,12 @@ Requirements:
   governs.
 - Split scenarios when one seam cannot faithfully observe all outcomes.
 
-The contract hash covers behavioral fields only — ID, Subject, Seam, Given, When, Then. Basis and
-Evidence are provenance and stay outside it, so provenance edits never stale a test. The canonical
-computation lives in `scripts/check-acceptance.py`; do not restate it in prose.
+The contract hash covers test obligations — ID, Subject, Seam, Given, When, Then, and the normalized
+Essential Subject set named by `Closes` when present. Basis and Evidence are provenance and stay
+outside it, so provenance edits never stale a test. Adding, removing, or changing a `Closes`
+Subject changes which Essential outcomes the test claims to discharge and therefore stales its
+marker. Renumbering or re-encoding a link to the same Subject does not. The canonical computation
+lives in `scripts/check-acceptance.py`; do not restate it in prose.
 
 When any hashed field changes semantically, invalidate each affected test record immediately:
 
@@ -195,10 +214,12 @@ may instead use `$seed-tdd`'s isolated sensitivity RED: the record becomes `gree
 token `PREEXISTING_GREEN: <mutation and failing assertion evidence>`; until that proof exists it
 stays `gap — RED not observed; sensitivity unproven`.
 
-Every record states its worst v1-relevant failure outcome as `Risk` and the narrowest harness that
-can refute it as `Layer`: `unit` (policy, calculation, boundary values), `integration` (data or
-external connections), `browser` (user-visible flow), or `observability` (performance or
-operations). Seam says where to observe; Layer says what kind of test refutes the risk.
+Every record states its worst v1-relevant adverse outcome as `Risk`, not a paraphrase of the AC
+Subject or `Then`, and the narrowest harness that can refute it as `Layer`: `unit` (policy,
+calculation, boundary values), `integration` (data or external connections), `browser`
+(user-visible flow), or `observability` (performance or operations). Seam says where to observe;
+Layer says what kind of test refutes the risk. If the proposed harness cannot refute the stated
+Risk, revise the Seam/Layer or split the scenario before handoff.
 
 ### Realization lifecycle records
 

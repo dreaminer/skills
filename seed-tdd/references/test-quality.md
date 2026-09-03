@@ -18,6 +18,29 @@ Several assertions may express one logical outcome. A file may cover several ACs
 record names a file containing that AC's current marker. The marker proves lexical linkage only;
 the reached seam and assertions prove semantic fidelity.
 
+## Essential closure
+
+When an AC has `Closes`, its test is also the reachability proof for every linked Essential use
+case:
+
+- Enter through a supported entry point as an intended consumer invokes the Seed target.
+- Traverse the maintained composition that entry uses for in-scope collaborators.
+- Observe the ratified outcome through a supported output. Private state and side-channel
+  assertions may supplement that observation but cannot carry closure.
+- A component API is the supported entry only when it is itself the target's delivered consumer
+  interface. An application, executable, or worker closer reaches the component through its
+  maintained runtime wiring.
+- Decide closure from the supported entry and maintained composition, independently of `Layer`.
+  A pure library can close through an in-process public API, while an `integration` label can still
+  hide disconnected module composition.
+- Give each independently promised consumer entry a closing AC. Incidental adapters that
+  Essential intent never promised need no duplicate closer.
+
+Before RED, require the lifecycle `Risk` to name an adverse v1 consequence and the proposed
+harness to refute that consequence. A paraphrase of the AC Subject or `Then` does not meet this
+bar. If either condition fails, keep the lifecycle evidence intact and return `SEED_TDD_BLOCKED`
+with `Owner: seed-system`.
+
 ## Test doubles
 
 Exercise real internal collaborators. Place test doubles at environmental boundaries: external
