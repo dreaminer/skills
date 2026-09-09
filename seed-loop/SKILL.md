@@ -38,6 +38,9 @@ link, hash, and completion facts. Select exactly one owner in this order:
 5. When the Acceptance axis is complete, any missing, pending, or stale non-deferred IP goes to
    `seed-realize`. Deferred IPs are excluded; a technical IP needs no invented AC.
 6. Only both completed axes plus the full suite and required repository checks can complete the loop.
+   At this aggregate gate, reuse a check result from the current run when its command and successful
+   observed result are available and its inputs and execution environment are known to be unchanged;
+   otherwise run the check. Run the completion checker against the current artifacts.
 
 Use the sibling `seed-system/scripts/check-acceptance.py` as follows:
 
