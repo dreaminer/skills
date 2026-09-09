@@ -50,6 +50,10 @@ wiring, persistence, migration, scheduler, configuration, deployment artifact, o
 boundary. Reuse current AC tests but do not create fake ACs for technical choices with no natural
 user-visible behavior.
 
+Choose routine implementation details within the ratified ACs and Default. A missing decision
+about promised behavior or the technical choice itself is material underspecification and belongs
+to `$seed-system`.
+
 If the selected Default is wrong, materially underspecified, or cannot be observed with the current
 authorized environment, do not silently substitute it or claim live operation. Route the exact
 choice to `$seed-system` for change or deferral.

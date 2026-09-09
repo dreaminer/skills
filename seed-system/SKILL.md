@@ -162,7 +162,8 @@ uses `--complete realization` and belongs to `$seed-realize`.
 
 ## First turn
 
-Do not explain the document structure first. Load the input package silently, then say:
+Do not explain the document structure first. Load the input package silently. If the user has
+already named a starting flow, begin there without asking them to choose it again; otherwise say:
 
 ```text
 Essential 몸체는 받았어. 어느 흐름부터 구현 판정 가능한 Acceptance로 잡아볼까?
