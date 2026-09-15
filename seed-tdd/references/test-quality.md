@@ -18,6 +18,24 @@ Several assertions may express one logical outcome. A file may cover several ACs
 record names a file containing that AC's current marker. The marker proves lexical linkage only;
 the reached seam and assertions prove semantic fidelity.
 
+## Essential consistency
+
+Compare the selected AC, its fixture, action, and expected results with the related UseCase and
+referenced Domain conditions. A passing assertion can still encode a forbidden actor or action.
+
+- If the ratified AC is clear and consistent with Essential, repair a conflicting fixture,
+  expectation, or implementation in the selected slice and rerun the relevant tests.
+- If an omission or contradiction in the AC needs a contract decision, preserve lifecycle
+  evidence and return `SEED_TDD_BLOCKED` with `Owner: seed-system`. Cite the AC and Essential
+  definitions, the test evidence when present, and the needed decision. Do not invent a new
+  obligation or rewrite the ratified AC here; changes to Essential intent belong to `seed-body`.
+
+For example, Essential may require a manager key plus a request-scoped Platform Client identity
+and forbid direct Platform Client key authentication. If the AC only says “authorized Client”
+and tests expect success with the forbidden key, return the missing contract decision to
+`seed-system`. If the AC already specifies the correct authentication and identity, fix the
+test or implementation instead of requesting another ratification.
+
 ## Essential closure
 
 When an AC has `Closes`, its test is also the reachability proof for every linked Essential use
@@ -34,12 +52,32 @@ case:
   A pure library can close through an in-process public API, while an `integration` label can still
   hide disconnected module composition.
 - Give each independently promised consumer entry a closing AC. Incidental adapters that
-  Essential intent never promised need no duplicate closer.
+  the ratified delivery scope never promised need no duplicate closer.
 
 Before RED, require the lifecycle `Risk` to name an adverse v1 consequence and the proposed
 harness to refute that consequence. A paraphrase of the AC Subject or `Then` does not meet this
 bar. If either condition fails, keep the lifecycle evidence intact and return `SEED_TDD_BLOCKED`
 with `Owner: seed-system`.
+
+### Browser closers
+
+For a web UI Seam, use the project's repeatable browser test runner to establish RED/GREEN.
+Choose a missing runner through the existing `seed-system` implementation proposal process.
+MCP can assist exploration or diagnosis; it is not required and a walkthrough alone is not GREEN.
+
+- Drive the user's action through the delivered UI and observe its result over real internal
+  composition. Apply the environmental-double boundary below; mocking the application's internal
+  API cannot prove delivery closure. Setup APIs may prepare Given, not perform the tested When.
+- Apply RED classification below: browser provisioning, server setup, login-fixture, or data setup
+  failures are gaps.
+  A missing contracted screen/action or Then-derived assertion can establish RED once the fixture
+  and target are known to be correct; a timeout alone does not identify the cause.
+- Repair locators or waits while preserving the contracted outcome. A skipped test or weakened
+  assertion is not GREEN. Route a needed contract change to `seed-system`; keep test or implementation
+  defects within `seed-tdd`. Record the observed command result in Notes, linking runner artifacts
+  when useful; the maintained full-suite command should include the browser tests.
+- Apply `UNEXPECTED_GREEN` unchanged when behavior already exists. For example, severing the reached
+  UI-to-application connection in the isolated copy should fail the relevant outcome assertion.
 
 ## Test doubles
 

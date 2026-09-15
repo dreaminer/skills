@@ -157,3 +157,27 @@ This adds no document, ID family, completion axis, framework rule, browser requi
 restriction. A component API qualifies when it is itself the Seed target's delivered consumer
 interface. Separately, use lifecycle `Risk` to challenge Seam/Layer test planning rather than
 merely restating the AC Subject or `Then`.
+
+## Conditional UI closure (2026-09-15)
+
+The user approved optional UI coverage within the existing Seed structure. Keep one Seam and one
+lifecycle per AC; separate delivery-entry ACs may share an Essential use case. This reuses the
+existing many-to-many `Closes` relation rather than adding a UI skill, a toggle, a schema migration,
+or a third completion axis. UI obligations follow ratified delivery scope, including System choices;
+roles alone do not imply screens. Non-UI projects retain their existing test boundaries.
+
+`seed-system` owns entry coverage judgment and artifact examples; `seed-tdd` owns browser test
+fidelity and RED/GREEN. Runtime and runner choices remain IPs realized by `seed-realize`. Tests run
+through the project's runner; MCP is optional exploration support. An opt-in goal walkthrough is
+feedback for those owners, not a new owner or completion signal. No framework is fixed by the skill.
+
+These are applications of existing closure and test-quality guidance, not new mechanical gates.
+The checker groups closure by Essential subject, so it cannot detect a missing promised UI entry
+when another entry closes that subject. It validates Layer labels and marker presence, not actual
+browser traversal, internal wiring, runner execution, or the truth of a recorded GREEN. Human/agent
+review still carries those judgments; a walkthrough score does not prove usability or replace tests.
+
+Existing closure and hash regressions cover the structural model. No live UI skill-execution trace
+is claimed by this change. Revisit per-entry coverage if an actual trace shows Stage B ratifying
+without a promised closer; use that failure to justify the narrowest correction. Reverting this
+guidance never removes already-ratified UI obligations from a project's completion requirements.

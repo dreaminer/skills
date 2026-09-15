@@ -140,6 +140,14 @@ Requirements:
   governs.
 - Split scenarios when one seam cannot faithfully observe all outcomes.
 
+For a promised UI, give the screen its own AC and lifecycle record. For example, an API cancellation
+AC can verify permission and state rules while a screen cancellation AC verifies the user's action
+and visible result. They share the Essential use-case link in `Evidence`; each promised delivery
+entry's closer also names it in `Closes`. Select risks rather than duplicating every API case in the
+browser. If the UI entry is a System-designed choice rather than inherited Essential content, use
+`Basis: proposed`; it can still carry `Closes`. Put runtime and runner choices in the implementation
+proposal, keeping each AC's Seam and outcomes independent of the test framework.
+
 The contract hash covers test obligations — ID, Subject, Seam, Given, When, Then, and the normalized
 Essential Subject set named by `Closes` when present. Basis and Evidence are provenance and stay
 outside it, so provenance edits never stale a test. Adding, removing, or changing a `Closes`
@@ -217,9 +225,9 @@ stays `gap — RED not observed; sensitivity unproven`.
 Every record states its worst v1-relevant adverse outcome as `Risk`, not a paraphrase of the AC
 Subject or `Then`, and the narrowest harness that can refute it as `Layer`: `unit` (policy,
 calculation, boundary values), `integration` (data or external connections), `browser`
-(user-visible flow), or `observability` (performance or operations). Seam says where to observe;
-Layer says what kind of test refutes the risk. If the proposed harness cannot refute the stated
-Risk, revise the Seam/Layer or split the scenario before handoff.
+(user-visible flow through the delivered UI), or `observability` (performance or operations).
+Seam says where to observe; Layer says what kind of test refutes the risk. If the proposed harness
+cannot refute the stated Risk, revise the Seam/Layer or split the scenario before handoff.
 
 ### Realization lifecycle records
 
