@@ -75,7 +75,9 @@ AC's executable seam.
 Implement the smallest production behavior satisfying the selected AC through its ratified seam.
 Follow relevant ratified defaults, but do not verify unrelated IPs. Run the narrow test and maintained
 relevant suite. Mark the AC `green` only when both pass with the current hash and execution evidence
-is recorded. A conflict with another AC or a ratified choice routes to `$seed-system`.
+is recorded. Contract conflicts with Essential, another AC, or a ratified choice route to
+`$seed-system`; distinguish them from test or implementation defects using the Essential
+consistency guidance in `references/test-quality.md`.
 
 ## 5. Continue or complete
 

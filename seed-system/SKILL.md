@@ -104,17 +104,29 @@ closing check can send you back to divergence.
 Closing check — judge these before staging the batch:
 
 - Coverage: does each inherited Essential outcome have at least one AC naming it in Evidence?
+  Compare the related UseCase and referenced Domain with the AC set: are the actors,
+  preconditions, permissions, prohibitions, and isolation conditions affecting that behavior
+  preserved without omissions or contradictions? An Evidence link alone does not establish
+  this. Cover a shared condition where it is observable rather than copying it into every AC.
 - Delivery closure: does each inherited Essential use case have at least one AC whose `Closes`
   link enters through a supported consumer entry, traverses the maintained composition for its
   in-scope collaborators, and observes the ratified outcome through a supported output? One AC
   may close several outcomes; a component API qualifies only when it is the target's supported
   delivery interface. Require separate closers for independently promised consumer entries, not
   merely because the implementation happens to expose several adapters.
+  Resolve promised entries from Essential and ratified System delivery choices. A promised UI
+  needs a screen-entry closer; a library/API-only scope needs none. If delivery scope is unclear,
+  resolve it in this conversation rather than inferring either UI or its absence.
 - Testability: can every `Then` be observed at its declared seam?
 - Atomicity: does each scenario test one behavior at one seam?
 - Failure paths: are relevant failure, retry, reverse, duplicate, and conflict flows included?
 - v1 boundary: did deferred material leak into v1 Acceptance?
 - Essential gap: does any scenario need product intent that Essential does not provide?
+
+For example, “an authorized Client creates a Client” can omit Essential's requirement to
+authenticate as a manager and act under a request-scoped group identity. Preserve that condition
+and any direct-key prohibition in observable ACs before ratifying the set; successful creation
+alone does not demonstrate them. A request identity does not itself promise a UI switcher.
 
 Ratify in two stages. Stage A, the criteria:
 
@@ -149,6 +161,16 @@ at a time. At the end of a standalone run, present next-step categories only (`$
 tickets, prototype); do not start one unless the user asks. Under an active seed-loop, return the
 ratified handoff and verification result to the loop; the initial loop request already authorizes
 the next owner transition but never substitutes for content ratification.
+
+### Optional UI walkthrough
+
+When the user requests a walkthrough of an implemented UI, let the user or a fresh reviewer context
+attempt the Essential goal from its starting conditions without the implementer's click recipe.
+Keep observations and reproduction evidence in conversation or free-form working notes. Route an
+existing contract violation to `seed-tdd` to reproduce with a failing test before repairing the
+implementation; route missing System behavior here for ratification and new Essential intent to
+`seed-body`. Review judgments create no lifecycle status or GREEN evidence. The loop does not
+automatically select this optional review.
 
 ## Verification
 
