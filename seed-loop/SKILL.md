@@ -31,10 +31,15 @@ link, hash, and completion facts. Select exactly one owner in this order:
 1. An active upstream decision or change goes to its original owner, then affected downstream work
    is replayed in dependency order.
 2. Missing or invalid Essential artifacts go to `seed-body`; missing, unratified, or structurally
-   invalid Acceptance/proposal artifacts go to `seed-system`.
+   invalid Acceptance/proposal artifacts go to `seed-system`. On a user start/resume with existing
+   Seed artifacts, also route to `seed-system` for its existing-contract review before accepting
+   completion. Reuse that review within this invocation only while its inputs and requested scope
+   are unchanged; a historical COMPLETE or a passing structural checker is not that review.
 3. A current `SEED_TDD_BLOCKED` naming `Owner: seed-realize` goes to `seed-realize` before selecting
    another AC. After `SEED_REALIZE_PROGRESS` names `Resume owner: seed-tdd`, resume that AC.
-4. Any non-green, missing, or stale AC lifecycle record goes to `seed-tdd`.
+4. Any non-green, missing, or stale AC lifecycle record goes to `seed-tdd`. A user-requested behavior
+   recheck also goes there after contract review, even for GREEN records, until the selected scope
+   has fresh verification evidence. Preserve an inspection-only request's limits on changes.
 5. When the Acceptance axis is complete, any missing, pending, or stale non-deferred IP goes to
    `seed-realize`. Deferred IPs are excluded; a technical IP needs no invented AC.
 6. Only both completed axes plus the full suite and required repository checks can complete the loop.
@@ -106,3 +111,5 @@ Resume: $seed-loop <project-relative target>
 
 Never declare completion from a leaf token alone, silently narrow a ratified Default, or treat AC
 GREEN as proof that unrelated infrastructure or deployment choices are realized.
+In Verification, distinguish contract review from executed behavior checks and optional UI
+walkthroughs. Report requested work that remains blocked instead of substituting prior GREEN.

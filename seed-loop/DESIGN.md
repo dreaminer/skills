@@ -39,3 +39,21 @@ remains backward-compatible syntax for strict aggregate `--complete all`.
 User ratification is required before adding a canonical state artifact, stable ID family, parallel
 owners, automatic rollback, a new completion axis, or moving a leaf's human-ratification boundary.
 Routing changes must replace an existing selection rule rather than duplicate leaf instructions.
+
+## Existing-project review before completion (2026-09-15)
+
+A reported UI-review invocation ended from existing GREEN records without checking promised UI
+coverage. The conditional UI guidance lived in leaves the router could skip. A minimal fixture also
+shows that adding a promised web entry to Essential leaves API-only structural completion green;
+that is the checker's documented semantic boundary, not a reason to infer UI completeness.
+
+Selection rule 2 now includes the existing-contract review on a user start/resume. Its evidence may
+be reused during the same invocation while inputs and requested scope remain unchanged, avoiding
+a review loop after every leaf return. Rule 4 also honors explicitly requested behavior rechecks
+despite GREEN records. The current request and observed review evidence drive these transitions;
+there is no canonical review status, hash migration, or third completion axis. Ordinary continuation
+still uses existing lifecycle records after that review. Review-only scope remains read-only.
+
+`seed-system` owns review and any required contract ratification; `seed-tdd` owns behavioral evidence.
+Optional goal walkthroughs remain opt-in. Completion reports distinguish these kinds of verification
+so a contract-only review cannot be reported as an executed UI test.
