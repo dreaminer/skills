@@ -162,6 +162,17 @@ tickets, prototype); do not start one unless the user asks. Under an active seed
 ratified handoff and verification result to the loop; the initial loop request already authorizes
 the next owner transition but never substitutes for content ratification.
 
+### Existing-contract review
+
+When resuming an existing Seed project for review, apply the closing check above to the current
+Essential, ratified delivery scope, ACs, and test links, even if every recorded AC is GREEN. Report
+the mapping of promised entries to closing ACs and any uncovered or conflicting obligations.
+Inspect existing UI-specific contracts and tests as evidence; their mere presence does not establish
+canonical AC coverage. Propose missing screen ACs through the existing ratification process rather
+than silently treating an API closer as UI coverage or re-ratifying unchanged contracts. New Essential
+intent still returns to `seed-body`. Respect review-only scope; otherwise hand confirmed gaps to
+the existing TDD flow. A clean review is evidence for this invocation, not proof the UI was executed.
+
 ### Optional UI walkthrough
 
 When the user requests a walkthrough of an implemented UI, let the user or a fresh reviewer context
