@@ -57,3 +57,10 @@ still uses existing lifecycle records after that review. Review-only scope remai
 `seed-system` owns review and any required contract ratification; `seed-tdd` owns behavioral evidence.
 Optional goal walkthroughs remain opt-in. Completion reports distinguish these kinds of verification
 so a contract-only review cannot be reported as an executed UI test.
+
+## Recheck mode removed (2026-09-19)
+
+The rule 4 "requested behavior recheck" sentences and the Verification tail about walkthroughs were
+deleted. Their only basis was the hypothetical scenario in `docs/SEED_UI_RESUME_REGRESSION.md`, not
+the reproduced routing failure, and a second selection mode in `seed-tdd` interfered with every TDD
+invocation. Rule 2's existing-contract review stays; it is the correction the replay justified.

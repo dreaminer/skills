@@ -34,16 +34,7 @@ unratified choices, or a baseline failure that obscures the selected AC returns
 
 ## 2. Select one AC
 
-For a requested behavior recheck, include the requested ACs even when their records are GREEN.
-Inspect their tests against `references/test-quality.md` and run the selected scope with current
-inputs; use the observed results rather than historical lifecycle notes. If a test is missing or
-unfaithful, return to the normal RED/GREEN slice; contract gaps go to `seed-system`. Honor an
-inspection-only request by reporting findings without changing production, contracts, or lifecycle
-records. Verification of unchanged passing behavior does not require manufacturing a new RED.
-
-For a recheck, select only requested ACs still lacking current verification evidence, one at a time
-in document order; finish that scope without replaying already-checked GREEN records. For normal
-implementation, choose exactly one record in this order:
+Choose exactly one record in this order:
 
 1. an existing `red` record;
 2. `gap — contract changed; test relink required`;
@@ -89,10 +80,6 @@ is recorded. Contract conflicts with Essential, another AC, or a ratified choice
 consistency guidance in `references/test-quality.md`.
 
 ## 5. Continue or complete
-
-For a requested recheck, first finish current verification of every selected AC or report the
-remaining blocker; all records being historically GREEN does not end that work. An inspection-only
-run reports its findings and executed scope without converting them into an implementation-complete claim.
 
 Return to selection until blocked or all AC records are current-hash GREEN. Then audit each `Then`
 against its assertion at the declared Seam and each closing AC against the supported-entry rules
