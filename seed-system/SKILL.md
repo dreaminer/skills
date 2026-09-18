@@ -103,11 +103,14 @@ closing check can send you back to divergence.
 
 Closing check — judge these before staging the batch:
 
-- Coverage: does each inherited Essential outcome have at least one AC naming it in Evidence?
-  Compare the related UseCase and referenced Domain with the AC set: are the actors,
-  preconditions, permissions, prohibitions, and isolation conditions affecting that behavior
-  preserved without omissions or contradictions? An Evidence link alone does not establish
-  this. Cover a shared condition where it is observable rather than copying it into every AC.
+- Coverage: start from each v1 behavioral obligation stated in Essential, including use-case
+  conditions and outcomes and Domain invariants. Judge by counterexample: can an implementation
+  or in-scope path satisfy every staged AC yet violate that obligation? If so, coverage is
+  incomplete. Identify the AC `Then` clauses and declared seams whose assertions would fail for
+  that counterexample; an Evidence link or adjacent behavior is insufficient if it still passes.
+  Reuse coverage where the same assertions expose the violation; retain one seam per AC.
+  Present uncovered obligations with their Essential references and counterexamples, and return
+  to divergence to resolve them before Stage B and handoff.
 - Delivery closure: does each inherited Essential use case have at least one AC whose `Closes`
   link enters through a supported consumer entry, traverses the maintained composition for its
   in-scope collaborators, and observes the ratified outcome through a supported output? One AC
@@ -123,10 +126,12 @@ Closing check — judge these before staging the batch:
 - v1 boundary: did deferred material leak into v1 Acceptance?
 - Essential gap: does any scenario need product intent that Essential does not provide?
 
-For example, “an authorized Client creates a Client” can omit Essential's requirement to
-authenticate as a manager and act under a request-scoped group identity. Preserve that condition
-and any direct-key prohibition in observable ACs before ratifying the set; successful creation
-alone does not demonstrate them. A request identity does not itself promise a UI switcher.
+For example, in the user-reported message case:
+
+- Essential: only a Master Client may hold canBeRoot.
+- Counterexample: an authorized actor directly grants canBeRoot to a non-Master Client.
+- The actor-authority AC and CMS target-filter AC can both remain satisfied.
+- Missing coverage: rejection of that grant through the public grant-operation seam.
 
 Ratify in two stages. Stage A, the criteria:
 

@@ -181,3 +181,27 @@ Existing closure and hash regressions cover the structural model. No live UI ski
 is claimed by this change. Revisit per-entry coverage if an actual trace shows Stage B ratifying
 without a promised closer; use that failure to justify the narrowest correction. Reverting this
 guidance never removes already-ratified UI obligations from a project's completion requirements.
+
+## Essential obligation preservation (2026-09-18)
+
+The user reported a message-project failure: Essential restricted master capabilities to Master
+Clients, while Acceptance covered actor authority at the server seam and target filtering only
+at the CMS seam. Those contracts could all pass while a direct grant violated the Domain rule.
+This is one user-reported failure, not an independently reproduced execution trace.
+
+The agreed correction changes the existing Coverage judgment's unit from use-case outcomes to
+Essential v1 behavioral obligations, and its direction from finding related ACs to looking for
+an implementation or in-scope path that satisfies them all while violating an obligation.
+`SKILL.md` owns that procedure and its example. This rewrites closing-check judgment guidance;
+it adds no script-enforced must or identity principle.
+
+Existing-contract review already applies the closing check, and seed-loop already routes
+start/resume through that review before completion. No new routing, canonical document, rule ID,
+required scratch inventory, schema, hash, completion axis, or TDD responsibility is introduced.
+Essential remains read-only; AC and seam choices retain the existing human ratification process.
+
+Recognizing obligations and finding counterexamples remain semantic judgments, not mechanical
+proof of completeness. Existing structural tests cannot establish this guidance's effectiveness.
+Live existing-contract review with this guidance is unverified. Validate it by rerunning review
+on the message project and checking whether it identifies the reported AC-010/AC-089 gap from
+Essential and Acceptance. Record that observed result before claiming the omission is prevented.
