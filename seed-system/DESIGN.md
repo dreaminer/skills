@@ -205,3 +205,14 @@ proof of completeness. Existing structural tests cannot establish this guidance'
 Live existing-contract review with this guidance is unverified. Validate it by rerunning review
 on the message project and checking whether it identifies the reported AC-010/AC-089 gap from
 Essential and Acceptance. Record that observed result before claiming the omission is prevented.
+
+## Trim after adversarial review (2026-09-19)
+
+Deleted from `SKILL.md`: the Optional UI walkthrough section (opt-in, never loop-selected, and the
+plan limited SKILL changes to Delivery closure) and the Delivery-closure restatements plus the
+Identity-principle-3 restatement inside Existing-contract review. Kept there: apply the closing check
+even when every AC is GREEN, report the promised-entry mapping (the replay's missing output), treat
+non-canonical contracts or tests as evidence rather than coverage, do not re-ratify unchanged
+contracts, respect review-only scope. The walkthrough rationale above remains a design note only.
+The counterexample Coverage rewrite stays unbounded; bounding it to the staged batch would skip the
+reported Domain-invariant gap. Its effectiveness remains unverified until a pre-AC-106 snapshot A/B.

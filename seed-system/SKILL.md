@@ -169,24 +169,12 @@ the next owner transition but never substitutes for content ratification.
 
 ### Existing-contract review
 
-When resuming an existing Seed project for review, apply the closing check above to the current
-Essential, ratified delivery scope, ACs, and test links, even if every recorded AC is GREEN. Report
-the mapping of promised entries to closing ACs and any uncovered or conflicting obligations.
-Inspect existing UI-specific contracts and tests as evidence; their mere presence does not establish
-canonical AC coverage. Propose missing screen ACs through the existing ratification process rather
-than silently treating an API closer as UI coverage or re-ratifying unchanged contracts. New Essential
-intent still returns to `seed-body`. Respect review-only scope; otherwise hand confirmed gaps to
-the existing TDD flow. A clean review is evidence for this invocation, not proof the UI was executed.
-
-### Optional UI walkthrough
-
-When the user requests a walkthrough of an implemented UI, let the user or a fresh reviewer context
-attempt the Essential goal from its starting conditions without the implementer's click recipe.
-Keep observations and reproduction evidence in conversation or free-form working notes. Route an
-existing contract violation to `seed-tdd` to reproduce with a failing test before repairing the
-implementation; route missing System behavior here for ratification and new Essential intent to
-`seed-body`. Review judgments create no lifecycle status or GREEN evidence. The loop does not
-automatically select this optional review.
+When resuming an existing Seed project, apply the closing check above to the current Essential,
+ratified delivery scope, ACs, and test links, even if every recorded AC is GREEN. Report the mapping
+of promised entries to closing ACs and any uncovered or conflicting obligations. Non-canonical
+contracts or tests are evidence, not coverage. Propose missing ACs through the existing ratification
+process; do not re-ratify unchanged contracts. Respect review-only scope. A clean review is evidence
+for this invocation, not proof that behavior was executed.
 
 ## Verification
 
