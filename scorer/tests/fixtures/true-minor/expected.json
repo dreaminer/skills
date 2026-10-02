@@ -1,0 +1,24 @@
+{
+  "case_id": "true-minor",
+  "category": "true_minor",
+  "dimension": "시각 표기",
+  "criteria": "완료 시각을 UTC 접미사와 함께 표기한다.",
+  "truth": "DEFECT",
+  "score_expectation": {
+    "operator": "eq",
+    "value": 96
+  },
+  "expected_gate": "CONTINUE_TO_STAGE_4",
+  "required_evidence": [
+    {
+      "artifact_id": "A-001",
+      "locator": "final-response",
+      "quote": "완료 시각: 2026-10-03 09:00"
+    }
+  ],
+  "rationale": "동결 요건 위반을 한 번만 감점하고 100 미만에서는 개선을 계속한다.",
+  "finding": {
+    "id": "missing-utc-suffix",
+    "definition": "UTC 접미사가 누락됨"
+  }
+}

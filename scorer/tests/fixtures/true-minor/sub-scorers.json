@@ -1,0 +1,52 @@
+[
+  {
+    "sub_scorer": "omission",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "시각 표기",
+          "score": 96,
+          "deductions": [
+            {
+              "severity": "Minor",
+              "penalty_points": 4,
+              "reason": "UTC 접미사가 누락됨",
+              "evidence": "A-001: \"완료 시각: 2026-10-03 09:00\""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "distortion",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "시각 표기",
+          "score": 96,
+          "deductions": [
+            {
+              "severity": "Minor",
+              "penalty_points": 4,
+              "reason": "UTC 접미사가 누락됨",
+              "evidence": "A-001: \"완료 시각: 2026-10-03 09:00\""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "violation_excess",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "시각 표기",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  }
+]

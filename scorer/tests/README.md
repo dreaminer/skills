@@ -22,6 +22,9 @@ first comparison measures validation behavior rather than stochastic differences
 | `ambiguous-insufficient` | no defect | A conditional requirement is charged when its precondition is false. |
 | `duplicate-defect` | defect, once | Two lenses report the same underlying failure. |
 | `clean-run` | no defect | Empty deductions must remain a valid result. |
+| `true-minor` | defect, once | A required timestamp suffix is absent; duplicate Minor findings deduct once. |
+| `false-minor` | no defect | A formatting preference is charged despite full rubric compliance. |
+| `major-boundary` | defect | A 10-point Major deduction must still block SUCCESS. |
 
 The oracle for each case is fixed in `fixtures/<case>/expected.json`. Never pass that file to a
 Scorer agent. Each case's other three files are the complete comparison capsule; each variant still
@@ -39,7 +42,7 @@ identifiers, frozen lens outputs, dimensions, deductions, and oracle evidence.
 ## Run the experiment
 
 Use the same model, model settings, tool policy, and clean-context policy for both variants. Run all
-eight cases three times per variant as fixed by `comparison-contract.json`.
+eleven cases three times per variant as fixed by `comparison-contract.json`.
 
 1. Render a case input when needed:
 
@@ -48,9 +51,12 @@ eight cases three times per variant as fixed by `comparison-contract.json`.
    ```
 
 2. For `baseline`, use `prompts/baseline-main-scorer.md`. It intentionally receives the same inputs
-   the current prompt declares. Keep `RUNNER_OUTPUT` in the experiment capsule for oracle grounding,
+   the pre-change prompt declared. Keep `RUNNER_OUTPUT` in the experiment capsule for oracle grounding,
    but do not silently add it to the baseline prompt.
-3. For `candidate`, use the proposed adversarial-validation prompt and the same fixed inputs.
+3. For `candidate`, use section 2-B of `../references/scorer-prompts.md`, including its raw
+   `RUNNER_OUTPUT` input and explicit deduction formula. Both variants are evaluated against the
+   current 100-only gate; the frozen baseline prompt remains unchanged. This is a combined contract
+   comparison, not evidence isolating the effect of adding raw input alone.
 4. Save each exact five-column result under the layout in `results/README.md`. The checker accepts
    the frozen baseline's native artifact citations as well as the candidate's locator-rich form, so
    output formatting alone cannot bias the verdict. Record identical execution metadata plus calls,

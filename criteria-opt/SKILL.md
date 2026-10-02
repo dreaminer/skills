@@ -29,6 +29,13 @@ instead of asking. Never ask mid-loop — a gap found after Stage 0 is filled wi
 default, not a new question. Non-interactive defaults: objective inferred from `SKILL.md` (stop if
 not inferable), `max_loop: 3`, `sub_agents: 3`; record any default applied unasked.
 
+Before the first run, save a restorable copy of the actual target skill source as
+`docs/criteria-opt/<session>/source-baseline/`. Include local modifications and untracked source
+files, preserve relative paths, and exclude the target's `docs/` tree. Record the source root and
+snapshot path in `history.md`; a commit/hash alone is not a backup. Keep the snapshot out of Runner
+inputs. If source references live outside the target directory, capture those too with their
+original paths recorded. Verify the copy against the source before allowing a rebuild.
+
 ## Stages
 
 ### 0: Rubricator
@@ -79,7 +86,7 @@ dimension-name list from `FINAL_RUBRIC`, and the loop counters:
 1. If any frozen dimension is missing or duplicated — judged by verbatim name comparison against
    that list — or any score is non-numeric or outside `0-100`, return `INVALID_SCORE_REPORT` and
    stop.
-2. Else if every evaluation item is `>= 90`, return `SUCCESS` and stop.
+2. Else if every evaluation item is `== 100`, return `SUCCESS` and stop.
 3. Else if `current_loop >= max_loop`, return `MAX_LOOP_EXCEEDED` and stop.
 4. Else return `CONTINUE_TO_STAGE_4`.
 
@@ -91,7 +98,7 @@ Delegate to the standalone `proposer` skill. Run only after `CONTINUE_TO_STAGE_4
   skill source, `FINAL_EVAL_RESULT`, `MODIFICATION_HISTORY`, `current_loop`, and the optional
   `sub_agents` count.
 - Out: the [최종 스킬 수정 제안서] — exact-match edit instructions (unique-match old/new text
-  pairs; `(신규 파일)` for new files) targeting only dimensions below 90, each edit carrying its
+  pairs; `(신규 파일)` for new files) targeting only dimensions below 100, each edit carrying its
   fingerprint fields; edits whose fingerprint matches a `FAILED` history entry are rejected, and
   boundary/safety-violating edits (trigger or scope broadening, guard weakening, unguarded
   destructive actions, sibling-trigger overlap) are vetoed in synthesis. It does not apply edits.
@@ -126,6 +133,8 @@ stage number, so any artifact is identified by session, loop, and stage alone:
 <target-skill>/docs/criteria-opt/<session>/
   0-rubric.md              # FINAL_RUBRIC — frozen once per session, loop-independent
   history.md               # MODIFICATION_HISTORY — cumulative, loop-independent, no stage number
+  source-baseline/         # restorable source before the first run; excludes docs/
+  source-diff.md           # terminal comparison, including added/deleted/untracked source files
   loop-<N>/
     1-runner-output.md     # RUNNER_OUTPUT capsule
     2-eval-result.md       # FINAL_EVAL_RESULT
@@ -169,7 +178,7 @@ measurably moves a target skill's dimension scores.
   after a successful rebuild, then mark per-edit `SUCCESS`/`FAILED` by score delta once the next
   loop's `FINAL_EVAL_RESULT` is frozen (schema in the `proposer` skill). At the same freeze,
   compare every frozen dimension against the previous loop, not only targeted ones: a dimension
-  no edit targeted that drops below 90 is recorded in that loop's history entry as a factual
+  no edit targeted that drops below 100 is recorded in that loop's history entry as a factual
   `NEW_DROP` line (dimension, 이전 점수 → 새 점수) — a label, not a verdict. The orchestrator
   must not attribute the drop to any edit; causal attribution is the Proposer's evidence-vs-diff
   check, and scores are never adjusted because of a `NEW_DROP`.
@@ -179,3 +188,6 @@ measurably moves a target skill's dimension scores.
   Applied `FAILED` edits stay in the source, so a flagged regression is surfaced for the user's
   revert decision (e.g. via git); the loop itself never reverts at terminal.
 - Rebuilder is mechanical; no interpretation beyond the final proposal is allowed.
+- On every terminal exit, save the source diff against `source-baseline/`, including complete
+  additions and deletions, and link it from `history.md`. Preserve unrelated user changes; neither
+  this diff nor a FAILED label authorizes an automatic restore.

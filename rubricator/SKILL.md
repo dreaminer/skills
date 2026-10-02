@@ -1,6 +1,6 @@
 ---
 name: rubricator
-description: Frames a target skill's objective and freezes a deduction-scoring rubric, synthesized as chief architect from lens-differentiated clean-context drafts (1-3, default 3). Use when an improvement loop (criteria-opt Stage 0) needs evaluation criteria fixed before any run, scoring, or patching, or when the user asks to draft, design, or freeze a rubric for a skill. It only produces the objective analysis and the frozen rubric: no running (Runner), no scoring (the `scorer` skill), no gating (Judger), no patch proposals (Proposer).
+description: "Frames a target skill's objective and freezes a deduction-scoring rubric, synthesized as chief architect from lens-differentiated clean-context drafts (1-3, default 3). Use when an improvement loop (criteria-opt Stage 0) needs evaluation criteria fixed before any run, scoring, or patching, or when the user asks to draft, design, or freeze a rubric for a skill. It only produces the objective analysis and the frozen rubric: no running (Runner), no scoring (the `scorer` skill), no gating (Judger), no patch proposals (Proposer)."
 ---
 
 # Rubricator
@@ -86,9 +86,8 @@ Downstream contract — who consumes which slice:
   quality boilerplate the objective never asked for.
 - A lens is a mining priority, not a quota: a drafter may return few or no criteria for its
   lens, and the final rubric has no per-lens minimum.
-- Write each 고득점 요건 as the deployment-ready state: the Scorer treats 90+ as "immediately
-  usable, no minor defect", so the requirement must describe what that state looks like for this
-  dimension.
+- Write each 고득점 요건 as an observable requirement. A score of 100 means no verified violation
+  in the supplied run, not a guarantee of defect-free behavior on other inputs.
 - Do not run the target, score outputs, propose patches, or edit the target skill.
 - Do not rank, average, or pre-weight dimensions; the rubric defines criteria, not verdicts.
 - Do not change the rubric after freeze except logged typo or formatting fixes.
