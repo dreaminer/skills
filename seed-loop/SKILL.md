@@ -20,8 +20,8 @@ no Seed artifacts is not a greenfield recovery target; return `SEED_LOOP_BLOCKED
 evidence-recovery flow. A Seed implementation already in progress may resume normally.
 
 Resolve each sibling leaf installed beside this skill. Load and follow only the selected leaf's
-`SKILL.md`; on a transition, release the previous leaf instructions before loading the next. Direct
-leaf invocation remains available for users who intentionally want only one phase.
+`SKILL.md`; on a transition, stop following the previous leaf's instructions before loading the next.
+Direct leaf invocation remains available for users who intentionally want only one phase.
 
 ## Compute the next owner
 
