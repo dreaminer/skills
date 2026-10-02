@@ -1,0 +1,17 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "request": "완료 시각을 UTC 접미사와 함께 표기한다."
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "final_response",
+      "locator": "final-response",
+      "content": "완료 시각: 2026-10-03 09:00"
+    }
+  ],
+  "exit_status": 0,
+  "errors": [],
+  "notes": []
+}

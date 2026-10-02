@@ -1,6 +1,6 @@
 ---
 name: scorer
-description: Scores a target skill's run capsule (RUNNER_OUTPUT) against a frozen rubric by deduction-only audit — lens-differentiated clean-context sub-scorers (1-3, default 3) cross-validated by a chief auditor. Use when an improvement loop (criteria-opt Stage 2) needs a score report for a run, or when the user asks to score or audit a skill run against a frozen rubric. It only produces the final score report: no rubric creation or edits (Rubricator), no running (Runner), no gating (Judger), no patch proposals (Proposer).
+description: "Scores a target skill's run capsule (RUNNER_OUTPUT) against a frozen rubric by deduction-only audit — lens-differentiated clean-context sub-scorers (1-3, default 3) cross-validated by a chief auditor. Use when an improvement loop (criteria-opt Stage 2) needs a score report for a run, or when the user asks to score or audit a skill run against a frozen rubric. It only produces the final score report: no rubric creation or edits (Rubricator), no running (Runner), no gating (Judger), no patch proposals (Proposer)."
 ---
 
 # Scorer
@@ -13,7 +13,7 @@ recorded, and every deduction is proven by quoting the run capsule.
 
 The Scorer audits what the run **did**, not what the target skill document promises. Its recall
 risk is asymmetric: over-deduction is filtered by cross-validation, but a defect all scorers miss
-inflates the score and lets the Judger's `>= 90` gate pass defective behavior. The three detection
+inflates the score and lets the Judger's `== 100` gate pass defective behavior. The three detection
 lenses exist to break that correlated miss.
 
 ## Required Inputs
@@ -47,7 +47,8 @@ it is static); the evidence-quoting rules then apply unchanged.
    rubric and the full capsule, and scores **every** frozen dimension — the lens sets
    defect-hunting priority, it does not slice the rubric or the input. Each returns deduction
    JSON per [references/scorer-prompts.md](references/scorer-prompts.md).
-3. **Cross-validate as chief auditor.** Merge the sub-scorer reports with the 2-B prompt:
+3. **Cross-validate as chief auditor.** Give the chief the full frozen rubric, raw `RUNNER_OUTPUT`,
+   and sub-scorer reports. Merge with the 2-B prompt:
    union-then-filter. A deduction survives on the coherence of its quoted evidence, never on how
    many scorers found it — a Critical found by one lens is kept if its evidence holds; a deduction
    echoed by every sub-scorer is removed if its evidence does not. Merge duplicate reports of the same
@@ -74,8 +75,8 @@ it is static); the evidence-quoting rules then apply unchanged.
 
 Downstream contract: the Judger validates that every frozen dimension appears exactly once with a
 numeric `0-100` score — a malformed report is `INVALID_SCORE_REPORT`, so report shape is itself a
-correctness obligation. `>= 90` on every dimension means SUCCESS, so 90+ may only appear when the
-run is deployment-ready with no minor defect. The Proposer targets dimensions below 90 using the
+correctness obligation. `== 100` on every dimension means SUCCESS: no verified deductions in this
+run against this rubric, not a guarantee about other runs. The Proposer targets dimensions below 100 using the
 감점 이유 and 검증된 근거 columns — write them specific enough to aim an edit at — and the 고득점
 요건 column is the only path by which dimension requirements reach it, so reproduce 평가 항목명 and
 고득점 요건 verbatim from the frozen rubric.

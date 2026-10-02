@@ -1,6 +1,6 @@
 ---
 name: proposer
-description: Builds one final exact-match edit proposal for a target skill as chief architect over strategy-lens-differentiated clean-context sub-proposals (minimal edit / structural / additive; 1-3, default 3), rejecting directions already FAILED in the modification history. Use when an improvement loop (criteria-opt Stage 4) needs edit instructions for dimensions scoring below 90, or when the user asks to turn a frozen score report into a patch proposal. It only produces the final modification proposal: no rubric work (the `rubricator` skill), no running (Runner), no scoring (the `scorer` skill), no gating (Judger), no edit application (Rebuilder).
+description: "Builds one final exact-match edit proposal for a target skill as chief architect over strategy-lens-differentiated clean-context sub-proposals (minimal edit / structural / additive; 1-3, default 3), rejecting directions already FAILED in the modification history. Use when an improvement loop (criteria-opt Stage 4) needs edit instructions for dimensions scoring below 100, or when the user asks to turn a frozen score report into a patch proposal. It only produces the final modification proposal: no rubric work (the `rubricator` skill), no running (Runner), no scoring (the `scorer` skill), no gating (Judger), no edit application (Rebuilder)."
 ---
 
 # Proposer
@@ -34,7 +34,7 @@ fill the gap — those are Runner's and the `scorer` skill's jobs.
 
 ## Process
 
-1. **Select targets.** Only dimensions scoring below 90 in `FINAL_EVAL_RESULT` are targets; the
+1. **Select targets.** Only dimensions scoring below 100 in `FINAL_EVAL_RESULT` are targets; the
    calling loop gates on the Judger's `CONTINUE_TO_STAGE_4` before invoking this skill.
 2. **Get strategy-differentiated sub-proposals.** Use clean contexts when available —
    `sub_agents` (1-3, default 3) sub-agents, none seeing another's output, each running the same
@@ -42,7 +42,7 @@ fill the gap — those are Runner's and the `scorer` skill's jobs.
    (smallest surgical replacement), 구조 개편 (restructure so the failure class cannot recur),
    보강 추가 (fill the gap with new content, including `(신규 파일)` edits); at 2 and 1, the
    merged assignments in the prompts reference keep all three strategies in play. Every
-   sub-proposer receives the full inputs and targets every dimension below 90 — the lens sets
+   sub-proposer receives the full inputs and targets every dimension below 100 — the lens sets
    fix-strategy priority, it does not slice the input. Each returns `proposals` JSON per
    [references/proposer-prompts.md](references/proposer-prompts.md).
 3. **Synthesize as chief architect.** Run the 4-B prompt: check for side effects between proposals
@@ -52,7 +52,7 @@ fill the gap — those are Runner's and the `scorer` skill's jobs.
    `outcome: FAILED` edit in `MODIFICATION_HISTORY`. All three fields must match; do not extend
    rejection to semantic similarity, and `PENDING`/`SUCCESS` entries are not grounds for rejection.
    Side-effect checking spans the whole frozen rubric, not only this loop's proposals: an edit
-   likely to degrade a dimension currently at 90+ is reworked or dropped, and an accepted
+   likely to degrade a dimension currently at 100 is reworked or dropped, and an accepted
    trade-off is stated in its 수정 이유. For each `NEW_DROP` in `MODIFICATION_HISTORY`, run the
    evidence-vs-diff check: if the drop's 검증된 근거 cites text or procedure a prior loop's edit
    introduced, treat it as a regression and prefer correcting or reverting that original edit
@@ -76,8 +76,9 @@ fill the gap — those are Runner's and the `scorer` skill's jobs.
 ## Outputs
 
 - [최종 스킬 수정 제안서]: loop number, 수정 목표, and a numbered edit list. Each edit carries
-  `[target_dimension]`, `[감점 유형]`, `[수정 전략]` (these three are the fingerprint),
+  `[target_dimension]`, `[감점 유형]`, `[수정 전략]`,
   `[Target 위치]`, `[기존 내용]`, `[수정할 내용]`, and `[수정 이유]`.
+  Fingerprint matching follows Process step 3; `target_dimension` identifies the score to track.
 
 Edit contract — what makes the proposal mechanically applicable:
 
@@ -108,7 +109,7 @@ because each entry is one of this skill's proposals plus outcomes:
   `[target_dimension]` score is compared before/after — higher → `outcome: SUCCESS (이전 점수 →
   새 점수)`; equal or lower → `outcome: FAILED (이전 점수 → 새 점수)`.
 - `NEW_DROP`: at the same freeze the orchestrator also compares every frozen dimension, not only
-  targeted ones; a non-targeted dimension that drops below 90 is recorded as a factual `NEW_DROP`
+  targeted ones; a non-targeted dimension that drops below 100 is recorded as a factual `NEW_DROP`
   line (dimension, 이전 점수 → 새 점수) in that loop's entry. It carries no causal attribution
   and is not an edit outcome — whether it is a regression is decided by this skill's
   evidence-vs-diff check in the next loop.
@@ -117,7 +118,7 @@ because each entry is one of this skill's proposals plus outcomes:
 
 ## Rules
 
-- Target only dimensions below 90; do not touch content that no deduction implicates.
+- Target only dimensions below 100; do not touch content that no deduction implicates.
 - Preserve the target skill's essential purpose; edits snipe the deduction causes, not style.
 - A lens is a strategy priority, not a quota: a sub-proposer whose lens fits a deduction poorly
   proposes the natural fix for it instead, and no lens has a per-loop minimum.
@@ -127,7 +128,7 @@ because each entry is one of this skill's proposals plus outcomes:
 - Every 수정 이유 must state why the edit resolves the quoted deduction — logical causation, not
   preference.
 - Protect passing dimensions: do not accept an edit whose predictable side effect degrades a
-  dimension currently at 90 or above without stating that trade-off in its 수정 이유.
+  dimension currently at 100 without stating that trade-off in its 수정 이유.
 - Boundary and safety are veto criteria in synthesis: an edit that broadens the target's trigger,
   scope, or responsibility, weakens an existing guard, preview, dry-run, rollback, or
   human-confirmation step, introduces an unguarded destructive or outward action (delete, push,

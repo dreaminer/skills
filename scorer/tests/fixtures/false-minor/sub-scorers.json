@@ -1,0 +1,45 @@
+[
+  {
+    "sub_scorer": "omission",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "처리 건수",
+          "score": 96,
+          "deductions": [
+            {
+              "severity": "Minor",
+              "penalty_points": 4,
+              "reason": "완전한 서술문이 아니어서 개선 여지가 있음",
+              "evidence": "A-001: \"3건 처리 완료\""
+            }
+          ]
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "distortion",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "처리 건수",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  },
+  {
+    "sub_scorer": "violation_excess",
+    "output": {
+      "evaluation": [
+        {
+          "dimension": "처리 건수",
+          "score": 100,
+          "deductions": []
+        }
+      ]
+    }
+  }
+]

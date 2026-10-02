@@ -1,0 +1,17 @@
+{
+  "target_skill": "fixture-skill",
+  "run_input": {
+    "request": "처리 건수 3을 정확하게 보고한다. 출력 문장 형식은 자유다."
+  },
+  "artifacts": [
+    {
+      "artifact_id": "A-001",
+      "kind": "final_response",
+      "locator": "final-response",
+      "content": "3건 처리 완료"
+    }
+  ],
+  "exit_status": 0,
+  "errors": [],
+  "notes": []
+}

@@ -31,6 +31,10 @@ absorbing their requests rather than resolving a model-routing contest.
 
 ## End-to-End Run Trace
 
+Historical evidence below uses the former `>= 90` gate. The current gate requires every dimension
+to equal 100. Preserve these recorded scores and decisions; they are not validation of the new
+gate, and the missing raw run artifacts prevent rescoring this trace under the current rules.
+
 Session `make-body/docs/criteria-opt/20260704-a/` — a real 3-loop run to terminal. Rubric: 10
 dimensions, gate threshold `>= 90` on every dimension.
 

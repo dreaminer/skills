@@ -139,6 +139,62 @@ function scoreReport(
 `;
 }
 
+for (const score of [90, 96, 99]) {
+  test(`a retained defect scoring ${score} continues the loop`, () => {
+    const root = mkdtempSync(path.join(os.tmpdir(), "scorer-gate-"));
+    const caseDir = path.join(root, "fixtures", "boundary-defect");
+    mkdirSync(caseDir, { recursive: true });
+    writeExpected(caseDir, {
+      case_id: "boundary-defect",
+      dimension: "근거 충실성",
+      truth: "DEFECT",
+      score_expectation: { operator: "eq", value: score },
+      expected_gate: "CONTINUE_TO_STAGE_4",
+      required_evidence: [defaultEvidenceRef],
+    });
+    for (const variant of ["baseline", "candidate"]) {
+      const runDir = path.join(root, variant, "run-1");
+      mkdirSync(runDir, { recursive: true });
+      writeFileSync(path.join(runDir, "boundary-defect.md"), scoreReport(score));
+    }
+    sealExperiment(root);
+    const result = JSON.parse(execFileSync(process.execPath, [
+      scriptPath, "--fixtures", path.join(root, "fixtures"),
+      "--baseline", path.join(root, "baseline"),
+      "--candidate", path.join(root, "candidate"), "--json",
+    ], { encoding: "utf8" }));
+    assert.equal(result.candidate.gate_errors, 0);
+    assert.equal(result.candidate.false_negatives, 0);
+    assert.equal(result.candidate.score_contract_errors, 0);
+  });
+}
+
+test("a spurious Minor deduction is both a false positive and a gate error", () => {
+  const root = mkdtempSync(path.join(os.tmpdir(), "scorer-minor-"));
+  const caseDir = path.join(root, "fixtures", "clean-run");
+  mkdirSync(caseDir, { recursive: true });
+  writeExpected(caseDir, {
+    case_id: "clean-run", dimension: "근거 충실성", truth: "NO_DEFECT",
+    score_expectation: { operator: "eq", value: 100 },
+    expected_gate: "SUCCESS", required_evidence: [],
+  });
+  for (const variant of ["baseline", "candidate"]) {
+    const runDir = path.join(root, variant, "run-1");
+    mkdirSync(runDir, { recursive: true });
+    writeFileSync(path.join(runDir, "clean-run.md"), scoreReport(variant === "baseline" ? 100 : 96));
+  }
+  sealExperiment(root);
+  const result = JSON.parse(execFileSync(process.execPath, [
+    scriptPath, "--fixtures", path.join(root, "fixtures"),
+    "--baseline", path.join(root, "baseline"),
+    "--candidate", path.join(root, "candidate"), "--json",
+  ], { encoding: "utf8" }));
+  assert.equal(result.behavior_verdict, "REGRESSED");
+  assert.equal(result.baseline.gate_errors, 0);
+  assert.equal(result.candidate.false_positives, 3);
+  assert.equal(result.candidate.gate_errors, 3);
+});
+
 test("reports an improvement when the candidate removes a baseline false positive", () => {
   const root = mkdtempSync(path.join(os.tmpdir(), "scorer-compare-"));
   const contractPath = writeContract(root);

@@ -345,7 +345,7 @@ function summarize(runs) {
         errors.push("SCORE_CONTRACT");
       }
 
-      const observedGate = observed.score >= 90 ? "SUCCESS" : "CONTINUE_TO_STAGE_4";
+      const observedGate = observed.score === 100 ? "SUCCESS" : "CONTINUE_TO_STAGE_4";
       if (expected.expected_gate && observedGate !== expected.expected_gate) {
         gateErrors += 1;
         errors.push("GATE");
