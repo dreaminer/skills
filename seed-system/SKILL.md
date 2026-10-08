@@ -133,6 +133,15 @@ For example, in the user-reported message case:
 - The actor-authority AC and CMS target-filter AC can both remain satisfied.
 - Missing coverage: rejection of that grant through the public grant-operation seam.
 
+Closed-set encoding: when an Essential obligation is an allowed set ("only these, nothing else"),
+cover it with one AC that names the set, names the in-scope writers that can create that record,
+and whose When is an out-of-set construction at those writers. The Then is rejection and the
+record not being created — not absence after a permitted request. Do not encode the obligation as
+one scenario per violation: unlisted combinations stay uncovered and the complement is unbounded.
+That is one behavior; those writers plus the record's query are one seam, while a distinct delivery
+entry (screen vs API) stays a separate AC. A success-path Then that only says the permitted action
+has no extra effect is not this case.
+
 Ratify in two stages. Stage A, the criteria:
 
 ```text
