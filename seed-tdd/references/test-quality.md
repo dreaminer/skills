@@ -9,6 +9,13 @@ Apply every rule here when creating or repairing a Seed TDD test.
 - Exercise the AC's declared public `Seam` and observe results exclusively through that interface.
 - Make the Given facts explicit, perform the When action once, and assert every observable clause
   in Then.
+- A Then that forbids a construction ("is rejected", "must not be created", "nothing outside the
+  set") is bound only when the test submits that forbidden construction and observes the rejection.
+  Asserting absence on the response of a permitted request does not bind that clause. For a
+  closed-set AC, submit one out-of-set witness at each writer the AC names — not the complement and
+  not undeclared paths; those requests are witnesses of one quantified When, not extra scenarios. A
+  Then that only says a permitted action has no extra effect ("is not auto-created", "other records
+  are unchanged") stays on that permitted When; do not invent a forbidden request for it.
 - Name the actor goal or automatic trigger and final domain result.
 - Treat the contract's examples or independent known literals as the sole source of expected
   values.

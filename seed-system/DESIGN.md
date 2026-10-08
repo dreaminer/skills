@@ -216,3 +216,30 @@ non-canonical contracts or tests as evidence rather than coverage, do not re-rat
 contracts, respect review-only scope. The walkthrough rationale above remains a design note only.
 The counterexample Coverage rewrite stays unbounded; bounding it to the staged batch would skip the
 reported Domain-invariant gap. Its effectiveness remains unverified until a pre-AC-106 snapshot A/B.
+
+## Closed-set application evidence (2026-09-19; reviewed 2026-10-08)
+
+The closed-set judgment guidance already used in the global installation is retained in version
+control. Coverage encoding belongs to `SKILL.md`; binding a forbidding `Then` belongs to
+`seed-tdd/references/test-quality.md`. These remain judgment guidance, not new script-enforced
+gates or identity principles.
+
+In trace project B (a separate user repository), recorded application notes show:
+
+- A review record identifies AC-003's permitted-request
+  test that did not exercise its forbidding clause, and AC-002's assertion that accepted a forbidden
+  initial grant.
+- A staged-acceptance record records Stage A/B ratification and
+  promotion to AC-106/107, plus the corresponding test-repair plan.
+- A prohibition-sweep record applies the guidance to the
+  Essential inventory and distinguishes forbidden constructions from permitted actions with no
+  extra effect.
+- A second staged-acceptance record records the next ratified
+  application, promoted to AC-108/109.
+
+The evidence grade is user-reported failure plus recorded application, not an independent A/B
+skill-execution trace. The claim that the first draft used one AC per violation is supported only
+by a recorded rejection note; the rejected draft was not recovered.
+The existing untracked local failure log is product-bug evidence, not proof
+that the guidance improved skill behavior; it is outside the cited commit.
+Effectiveness remains unverified by an independent comparison; application records establish use.
