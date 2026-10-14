@@ -187,8 +187,12 @@ for this invocation, not proof that behavior was executed.
 
 ## Verification
 
-Run `scripts/check-acceptance.py --docs <project-docs>` before presenting materialized output, and
-again after any edit to a materialized `ACCEPTANCE.md`. The script is the sole owner of the
+Use the directory that `Test:` and realization `Evidence` paths are relative to as the execution
+root. For slice-relative paths, use the service slice directory; for repository-relative paths,
+use the repository root. From that directory, run
+`python3 <seed-system-skill>/scripts/check-acceptance.py --docs <project-docs>` before presenting
+materialized output, and again after any edit to a materialized `ACCEPTANCE.md`. The script is the
+sole owner of
 contract-hash computation and the structural gates (fields, hash-marker linkage, coverage and
 closure naming, non-empty Essential inventory, mixed-mode); semantics stay a human/agent duty.
 Completion — every v1 AC current-hash GREEN under

@@ -35,8 +35,10 @@ link, hash, and completion facts. Select exactly one owner in this order:
    Seed artifacts, also route to `seed-system` for its existing-contract review before accepting
    completion. Reuse that review within this invocation only while its inputs and requested scope
    are unchanged; a historical COMPLETE or a passing structural checker is not that review.
-3. A current `SEED_TDD_BLOCKED` naming `Owner: seed-realize` goes to `seed-realize` before selecting
-   another AC. After `SEED_REALIZE_PROGRESS` names `Resume owner: seed-tdd`, resume that AC.
+   IP lifecycle records retained after a ratified deferral are realization work under rule 3.
+3. An IP lifecycle record for a ratified deferred proposal, or a current `SEED_TDD_BLOCKED` naming
+   `Owner: seed-realize`, goes to `seed-realize` before selecting another AC. After
+   `SEED_REALIZE_PROGRESS` names `Resume owner: seed-tdd`, resume that AC.
 4. Any non-green, missing, or stale AC lifecycle record goes to `seed-tdd`.
 5. When the Acceptance axis is complete, any missing, pending, or stale non-deferred IP goes to
    `seed-realize`. Deferred IPs are excluded; a technical IP needs no invented AC.
@@ -45,7 +47,9 @@ link, hash, and completion facts. Select exactly one owner in this order:
    observed result are available and its inputs and execution environment are known to be unchanged;
    otherwise run the check. Run the completion checker against the current artifacts.
 
-Use the sibling `seed-system/scripts/check-acceptance.py` as follows:
+Run the sibling `seed-system/scripts/check-acceptance.py` with `--docs <project-docs>` from the
+directory that `Test:` and realization `Evidence` paths are relative to. For slice-relative paths,
+use the service slice directory; for repository-relative paths, use the repository root. Use:
 
 ```text
 --links-only             body definition-link integrity

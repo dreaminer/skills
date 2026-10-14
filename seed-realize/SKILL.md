@@ -32,6 +32,12 @@ contradictory, or structurally invalid, return `SEED_REALIZE_BLOCKED` with `Owne
 
 ## 2. Select one proposal
 
+First select any ratified deferred proposal that still has an IP lifecycle record. Preserve the
+record's full contents in project-local working notes, remove only its active `## IP-nnn` section
+from `SEED_SYSTEM_TESTS.md`, and rerun the checker without completion scope. Under seed-loop,
+return `SEED_REALIZE_PROGRESS` with the retired IP and observed checker result so the loop can
+recompute its owner. In a standalone run, continue selection after each retirement.
+
 Choose exactly one non-deferred proposal in this order:
 
 1. the IP named by an active `SEED_TDD_BLOCKED` handoff;

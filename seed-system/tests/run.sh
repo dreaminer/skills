@@ -425,13 +425,64 @@ if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q "realization marker stale";
   exit 1
 fi
 
-cp "$fixture/docs/SEED_SYSTEM_TESTS.md" "$realization/docs/SEED_SYSTEM_TESTS.md"
 sed 's/^- accepted$/- deferred/' "$fixture/docs/SEED_SYSTEM_IMPL_PROPOSAL.md" \
   > "$realization/docs/SEED_SYSTEM_IMPL_PROPOSAL.md"
-(cd "$realization" && python3 "$checker" --docs docs --complete realization >/dev/null)
+python3 - "$realization" "$fixture" "$checker" <<'PY'
+from pathlib import Path
+import runpy
+import sys
+
+project, fixture, checker = map(Path, sys.argv[1:])
+seed = (fixture / 'docs/SEED_SYSTEM_IMPL_PROPOSAL.md').read_text()
+second = seed[seed.index('## IP-001\n'):].replace('IP-001', 'IP-002')
+proposals = project / 'docs/SEED_SYSTEM_IMPL_PROPOSAL.md'
+proposals.write_text(proposals.read_text() + '\n' + second)
+current = runpy.run_path(str(checker))['check_proposals'](proposals)
+records = project / 'docs/SEED_SYSTEM_TESTS.md'
+text = records.read_text()
+second_record = text[text.index('## IP-001\n'):].replace('IP-001', 'IP-002').replace('#ip-001', '#ip-002')
+second_record = second_record.replace(current['IP-001']['hash'], current['IP-002']['hash'])
+records.write_text(text + '\n' + second_record)
+PY
+
+for scope in structure acceptance realization all; do
+  rc=0
+  if [ "$scope" = structure ]; then
+    out=$(cd "$realization" && python3 "$checker" --docs docs 2>&1) || rc=$?
+  else
+    out=$(cd "$realization" && python3 "$checker" --docs docs --complete "$scope" 2>&1) || rc=$?
+  fi
+  if [ "$rc" -ne 1 ] || ! printf '%s' "$out" | grep -q 'IP-001 is deferred and must not have a lifecycle record' ||
+    ! printf '%s' "$out" | grep -q '1 failure(s)'; then
+    printf '%s\n' "the retained deferred IP record must be the only $scope failure" "$out" >&2
+    exit 1
+  fi
+done
+
+python3 - "$realization" <<'PY'
+from pathlib import Path
+import sys
+
+project = Path(sys.argv[1])
+records = project / 'docs/SEED_SYSTEM_TESTS.md'
+text = records.read_text()
+start = text.index('## IP-001\n')
+next_section = text.find('\n## ', start + 1)
+end = len(text) if next_section == -1 else next_section + 1
+history = project / '.scratch/retired-IP-001.md'
+history.parent.mkdir()
+history.write_text(text[start:end])
+records.write_text(text[:start] + text[end:])
+PY
+
+(cd "$realization" && python3 "$checker" --docs docs >/dev/null)
+for scope in acceptance realization all; do
+  (cd "$realization" && python3 "$checker" --docs docs --complete "$scope" >/dev/null)
+done
 
 printf '%s\n' \
   "OK: realization completion closes every non-deferred IP and detects stale choices" \
+  "OK: retiring one deferred IP restores all gates with the fixture's AC and other verified IP intact" \
   "OK: a deferred use case warns at design time and fails only the completion audit" \
   "OK: delivery closure is semantic-hashed, parenthesis-safe, many-to-many, and Layer-independent" \
   "OK: Basis, Layer, and mixed-mode gates each reject their corruption" \

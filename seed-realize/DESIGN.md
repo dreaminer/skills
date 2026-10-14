@@ -10,6 +10,10 @@ No new canonical document or ID family is introduced. `SEED_SYSTEM_IMPL_PROPOSAL
 human-ratified choice source written by `seed-system`; `SEED_SYSTEM_TESTS.md` carries mutable AC and
 IP lifecycle records. A missing IP record is implicit pending.
 
+Deferring an IP with an existing lifecycle record reproduces a checker failure until that active
+record is retired. Retirement stays with `seed-realize`; deferral ratification stays with
+`seed-system`. Previous evidence remains in working notes rather than an active lifecycle record.
+
 ## Ownership
 
 - `seed-system/references/artifacts.md`: artifact schemas.

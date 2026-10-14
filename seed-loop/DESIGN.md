@@ -30,7 +30,7 @@ remains backward-compatible syntax for strict aggregate `--complete all`.
 - `seed-body`: Essential language and outcomes.
 - `seed-system`: human-ratified AC and IP choices plus artifact schema.
 - `seed-tdd`: AC RED/GREEN lifecycle.
-- `seed-realize`: non-deferred IP realization lifecycle and evidence judgment.
+- `seed-realize`: IP realization lifecycle, retirement after ratified deferral, and evidence judgment.
 - `seed-system/scripts/check-acceptance.py`: mechanical predicates.
 - `seed-loop`: selection order and aggregate terminal.
 
