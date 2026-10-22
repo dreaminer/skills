@@ -51,9 +51,9 @@ What this trace demonstrates:
   clean terminal, recorded as concrete score deltas rather than an assertion of improvement.
 - **The gate is real** — `SUCCESS` fired only once all dimensions cleared `>= 90`, not on partial
   progress.
-- **The NEW_DROP safety net works** — a collateral regression a loop did not target (flow-first
-  100 → 88) was surfaced at the freeze and driven back to 100, showing the every-dimension
-  comparison catches side effects instead of only crediting targeted gains.
+- **NEW_DROP recorded one collateral drop** — under the former gate, the freeze comparison
+  recorded a non-targeted drop (flow-first 100 → 88); the next loop's freeze recorded that
+  dimension at 100.
 
 Full per-edit outcomes and the terminal delta record are in
 `make-body/docs/criteria-opt/20260704-a/history.md`.
