@@ -126,7 +126,7 @@ Closing check — judge these before staging the batch:
 - v1 boundary: did deferred material leak into v1 Acceptance?
 - Essential gap: does any scenario need product intent that Essential does not provide?
 
-For example, in the user-reported case:
+For example, in a user-reported case:
 
 - Essential: only a Owner account may hold the root flag.
 - Counterexample: an authorized actor directly grants the root flag to a non-Owner account.
