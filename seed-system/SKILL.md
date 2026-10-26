@@ -128,7 +128,7 @@ Closing check — judge these before staging the batch:
 
 For example, in a user-reported case:
 
-- Essential: only a Owner account may hold the root flag.
+- Essential: only an Owner account may hold the root flag.
 - Counterexample: an authorized actor directly grants the root flag to a non-Owner account.
 - The actor-authority AC and admin-console target-filter AC can both remain satisfied.
 - Missing coverage: rejection of that grant through the public grant-operation seam.

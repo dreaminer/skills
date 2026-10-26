@@ -131,7 +131,7 @@ strict aggregate for compatibility.
 - 다음 트레이스에서 관찰할 것(규칙 아님, 2026-08-16): Stage A에서 사용자에게 실제로 제시한
   "목록"이 무엇이었고(고정 closing check 6축 / 프로젝트별 완료 기준 / 즉석 합성), 사용자가 그
   질문에 답할 수 있었는가. 기존 항목에 답만 생겼을 때와 기준이 추가·삭제됐을 때 Stage A를
-  반복했는지도 함께 본다. 배경: ff8164a가 `SEED_SYSTEM_CRITERIA.md` 생성 절차와 재비준 트리거
+  반복했는지도 함께 본다. 배경: ff8164a(이 저장소로 옮기기 전 저장소의 커밋)가 `SEED_SYSTEM_CRITERIA.md` 생성 절차와 재비준 트리거
   문장을 지우면서 그것을 가리키던 Stage A 프롬프트만 남겼다. 트리거 한 문장만 되살리는 수정은
   이 관찰 전에는 하지 않는다.
 
@@ -185,7 +185,7 @@ guidance never removes already-ratified UI obligations from a project's completi
 ## Essential obligation preservation (2026-09-18)
 
 The user reported a failure in trace project B: Essential restricted owner capabilities to Owner
-Clients, while Acceptance covered actor authority at the server seam and target filtering only
+accounts, while Acceptance covered actor authority at the server seam and target filtering only
 at the admin-console seam. Those contracts could all pass while a direct grant violated the Domain rule.
 This is one user-reported failure, not an independently reproduced execution trace.
 
@@ -240,6 +240,6 @@ In trace project B (a separate user repository), recorded application notes show
 The evidence grade is user-reported failure plus recorded application, not an independent A/B
 skill-execution trace. The claim that the first draft used one AC per violation is supported only
 by a recorded rejection note; the rejected draft was not recovered.
-The existing untracked local failure log is product-bug evidence, not proof
-that the guidance improved skill behavior; it is outside the cited commit.
+An existing local failure log is product-bug evidence, not proof
+that the guidance improved skill behavior; it is outside the recorded application notes.
 Effectiveness remains unverified by an independent comparison; application records establish use.
