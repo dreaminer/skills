@@ -2,7 +2,7 @@
 
 Installable agent skill collection.
 
-For a code-free project, use `$seed-loop` to route `seed-body` and `seed-system`, then alternate `seed-tdd` for hash-linked Acceptance RED/GREEN with `seed-realize` for ratified technical choices. For an existing implementation, use `test-flows` to establish executable flow tests plus a `TEST_FLOWS_RESULT.md` verification receipt, then use `explain-flows` and `make-body` to consume that evidence without repeating regression proof. Essential language always requires human ratification; automated ratification wrappers are not packaged. `explain-flows` derives a compact Given/When/Then walkthrough without modifying tests. `proposal-review` gates standalone proposed skill edits against the target skill's job, evidence, cost, and before/after behavior. `skill-auditor` verifies whether an agent skill has predictable triggers, structure, steering, pruning, and validation evidence. `criteria-opt` orchestrates a rubric-first skill improvement loop: `rubricator` freezes a deduction-scoring rubric from the target objective, a system Runner captures current behavior, `scorer` audits the run capsule by deduction-only cross-validated sub-scorers, a deterministic Judger gates the loop, `proposer` synthesizes one exact-match edit proposal from strategy-differentiated sub-proposals, and a mechanical Rebuilder applies it all-or-nothing.
+To grow an app in short cycles, invoke `/grow-loop` explicitly: a thin direction plan, then vertical slices each closed by slice approval and a review of the running result. For a code-free project, use `$seed-loop` to route `seed-body` and `seed-system`, then alternate `seed-tdd` for hash-linked Acceptance RED/GREEN with `seed-realize` for ratified technical choices. For an existing implementation, use `test-flows` to establish executable flow tests plus a `TEST_FLOWS_RESULT.md` verification receipt, then use `explain-flows` and `make-body` to consume that evidence without repeating regression proof. Essential language always requires human ratification; automated ratification wrappers are not packaged. `explain-flows` derives a compact Given/When/Then walkthrough without modifying tests. `proposal-review` gates standalone proposed skill edits against the target skill's job, evidence, cost, and before/after behavior. `skill-auditor` verifies whether an agent skill has predictable triggers, structure, steering, pruning, and validation evidence. `criteria-opt` orchestrates a rubric-first skill improvement loop: `rubricator` freezes a deduction-scoring rubric from the target objective, a system Runner captures current behavior, `scorer` audits the run capsule by deduction-only cross-validated sub-scorers, a deterministic Judger gates the loop, `proposer` synthesizes one exact-match edit proposal from strategy-differentiated sub-proposals, and a mechanical Rebuilder applies it all-or-nothing.
 
 Runtime note: `make-body` requires Python 3.10+ as `python3` and POSIX `sh`. `seed-tdd` and
 `seed-realize` require Python 3.10+ and the packaged sibling `seed-system` checker. They use only the
@@ -22,6 +22,7 @@ The installer reads `.claude-plugin/plugin.json` and installs the skill folders 
 
 ```text
 .claude-plugin/plugin.json
+grow-loop/SKILL.md
 seed-loop/SKILL.md
 seed-loop/DESIGN.md
 seed-body/SKILL.md

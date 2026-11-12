@@ -11,6 +11,7 @@
   ],
   "files": [
     ".claude-plugin",
+    "grow-loop",
     "seed-loop",
     "seed-body",
     "make-body",

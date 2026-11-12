@@ -1,6 +1,7 @@
 {
   "name": "dreaminer-skills",
   "skills": [
+    "./grow-loop",
     "./seed-loop",
     "./seed-body",
     "./make-body",
